@@ -1,0 +1,12 @@
+{
+  "mop-giratorio-shopee": {
+    "url": "https://shopee.com.br/mop-giratorio-360",
+    "label": "Ver Preço na Shopee",
+    "price": "R$ 45,90"
+  },
+  "robo-aspirador-xiaomi-s10": {
+    "url": "https://amazon.com.br/robo-aspirador-xiaomi",
+    "label": "Ver na Amazon",
+    "price": "R$ 1.899,00"
+  }
+}
