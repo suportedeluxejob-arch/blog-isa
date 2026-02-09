@@ -22,7 +22,7 @@ export function AffiliateLink({ productKey, customUrl, children, className = "",
       href={href}
       target="_blank"
       rel="nofollow sponsored noopener noreferrer"
-      className={`inline-flex items-center gap-2 px-4 py-2 bg-pink-600 text-white font-bold rounded-lg hover:bg-pink-700 transition-colors ${className}`}
+      className={`btn-primary inline-flex items-center gap-2 px-4 py-2 bg-pink-600 !text-white font-bold rounded-lg hover:bg-pink-700 transition-colors no-underline ${className}`}
     >
       {label}
       {showIcon && <ExternalLink size={16} />}
