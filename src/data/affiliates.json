@@ -8,5 +8,10 @@
     "url": "https://amazon.com.br/robo-aspirador-xiaomi",
     "label": "Ver na Amazon",
     "price": "R$ 1.899,00"
+  },
+  "robo-aspirador-kabum": {
+    "url": "https://kabum.com.br/robo-aspirador-smart",
+    "label": "Ver na KaBuM!",
+    "price": "R$ 450,00"
   }
 }

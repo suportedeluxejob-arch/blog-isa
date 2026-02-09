@@ -5,6 +5,7 @@ import { AffiliateLink } from "@/components/mdx/affiliate-link";
 import { ProsConsList } from "@/components/mdx/pros-cons-list";
 import { ProductReviewBox } from "@/components/mdx/product-review-box";
 import Link from "next/link";
+import Image from "next/image";
 import { ChevronLeft } from "lucide-react";
 
 // Register MDX components
@@ -12,6 +13,7 @@ const components = {
     AffiliateLink,
     ProsConsList,
     ProductReviewBox,
+    Image,
     h2: (props: any) => <h2 className="text-2xl font-bold text-gray-900 mt-10 mb-6" {...props} />,
     p: (props: any) => <p className="text-gray-700 leading-relaxed mb-6" {...props} />,
     strong: (props: any) => <strong className="font-bold text-gray-900" {...props} />,
