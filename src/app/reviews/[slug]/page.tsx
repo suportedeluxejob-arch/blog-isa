@@ -87,39 +87,64 @@ export default async function ReviewPage({ params }: PageProps) {
             </div>
 
             {/* JSON-LD Schema */}
+            {/* JSON-LD Schema */}
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{
-                    __html: JSON.stringify({
-                        "@context": "https://schema.org",
-                        "@type": "Product",
-                        "name": frontmatter.productName,
-                        "image": frontmatter.featuredImage ? [`https://achadosvipdaisa.com.br${frontmatter.featuredImage}`] : [],
-                        "description": frontmatter.excerpt,
-                        "brand": {
-                            "@type": "Brand",
-                            "name": "Shopee/Generic" // Idealmente vindo do frontmatter
-                        },
-                        "offers": {
-                            "@type": "Offer",
-                            "url": frontmatter.affiliateLink,
-                            "priceCurrency": "BRL",
-                            "price": frontmatter.productPrice,
-                            "availability": "https://schema.org/InStock"
-                        },
-                        "review": {
-                            "@type": "Review",
-                            "reviewRating": {
-                                "@type": "Rating",
-                                "ratingValue": frontmatter.rating,
-                                "bestRating": "5"
-                            },
-                            "author": {
-                                "@type": "Person",
-                                "name": frontmatter.author
+                    __html: JSON.stringify(
+                        frontmatter.isReview
+                            ? {
+                                "@context": "https://schema.org",
+                                "@type": "Product",
+                                "name": frontmatter.productName,
+                                "image": frontmatter.featuredImage ? [`https://achadosvipdaisa.com.br${frontmatter.featuredImage}`] : [],
+                                "description": frontmatter.excerpt,
+                                "brand": {
+                                    "@type": "Brand",
+                                    "name": "Shopee/Generic"
+                                },
+                                "offers": {
+                                    "@type": "Offer",
+                                    "url": frontmatter.affiliateLink,
+                                    "priceCurrency": "BRL",
+                                    "price": frontmatter.productPrice,
+                                    "availability": "https://schema.org/InStock"
+                                },
+                                "review": {
+                                    "@type": "Review",
+                                    "reviewRating": {
+                                        "@type": "Rating",
+                                        "ratingValue": frontmatter.rating,
+                                        "bestRating": "5"
+                                    },
+                                    "author": {
+                                        "@type": "Person",
+                                        "name": frontmatter.author
+                                    }
+                                }
                             }
-                        }
-                    })
+                            : {
+                                "@context": "https://schema.org",
+                                "@type": "BlogPosting",
+                                "headline": frontmatter.title,
+                                "image": frontmatter.featuredImage ? [`https://achadosvipdaisa.com.br${frontmatter.featuredImage}`] : [],
+                                "author": {
+                                    "@type": "Person",
+                                    "name": frontmatter.author
+                                },
+                                "publisher": {
+                                    "@type": "Organization",
+                                    "name": "Achados Vip da Isa",
+                                    "logo": {
+                                        "@type": "ImageObject",
+                                        "url": "https://achadosvipdaisa.com.br/logo.png"
+                                    }
+                                },
+                                "datePublished": frontmatter.date,
+                                "dateModified": frontmatter.updatedAt,
+                                "description": frontmatter.excerpt
+                            }
+                    )
                 }}
             />
         </article>
