@@ -4,18 +4,13 @@
     "label": "Ver Preço na Shopee",
     "price": "R$ 45,90"
   },
-  "robo-aspirador-xiaomi-s10": {
-    "url": "https://amazon.com.br/robo-aspirador-xiaomi",
-    "label": "Ver na Amazon",
-    "price": "R$ 1.899,00"
-  },
   "robo-aspirador-kabum": {
     "url": "https://kabum.com.br/robo-aspirador-smart",
     "label": "Ver na KaBuM!",
     "price": "R$ 450,00"
   },
   "mini-processador-shopee": {
-    "url": "https://shopee.com.br/mini-processador-manual",
+    "url": "https://kabum.com.br/robo-aspirador-smart",
     "label": "Ver na Shopee",
     "price": "R$ 25,90"
   }
