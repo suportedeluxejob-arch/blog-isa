@@ -13,5 +13,10 @@
     "url": "https://kabum.com.br/robo-aspirador-smart",
     "label": "Ver na KaBuM!",
     "price": "R$ 450,00"
+  },
+  "mini-processador-shopee": {
+    "url": "https://shopee.com.br/mini-processador-manual",
+    "label": "Ver na Shopee",
+    "price": "R$ 25,90"
   }
 }
