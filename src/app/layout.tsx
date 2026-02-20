@@ -15,8 +15,15 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Achados Vip da Isa - Reviews Sinceros",
-  description: "Curadoria de ofertas e reviews testados pela Isabelle.",
+  title: "Achados Vip da Isa - Reviews Sinceros de Casa & Tech",
+  description: "Curadoria de ofertas e reviews testados pela Isabelle. Encontre os melhores gadgets para sua casa.",
+  openGraph: {
+    title: "Achados Vip da Isa",
+    description: "Reviews honestos e curadoria de ofertas. Gadgets, casa inteligente e beleza.",
+    type: "website",
+    locale: "pt_BR",
+    siteName: "Achados Vip da Isa",
+  },
 };
 
 export default function RootLayout({
@@ -29,7 +36,6 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Navbar />
         <AuthContextProvider>
           {children}
         </AuthContextProvider>

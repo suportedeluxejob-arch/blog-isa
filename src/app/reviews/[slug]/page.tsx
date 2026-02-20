@@ -8,6 +8,7 @@ import { ProductReviewBox } from "@/components/mdx/product-review-box";
 import Link from "next/link";
 import Image from "next/image";
 import { ChevronLeft, Star, ExternalLink } from "lucide-react";
+import PublicLayout from "@/components/layout/PublicLayout";
 
 // Register MDX components
 const components = {
@@ -103,7 +104,7 @@ export default async function ReviewPage({ params }: PageProps) {
     const firestorePost = await getFirestorePostBySlug(slug);
 
     if (firestorePost) {
-        return <FirestoreArticle post={firestorePost} />;
+        return <PublicLayout><FirestoreArticle post={firestorePost} /></PublicLayout>;
     }
 
     // 2. Fallback to MDX
@@ -116,98 +117,100 @@ export default async function ReviewPage({ params }: PageProps) {
     const { frontmatter, content } = mdxReview;
 
     return (
-        <article className="min-h-screen bg-white pb-20">
-            {/* Header / Hero */}
-            <header className="bg-brand-50 pt-20 pb-16 px-6 text-center">
-                <div className="max-w-3xl mx-auto">
-                    <Link href="/" className="inline-flex items-center text-pink-700 font-medium mb-8 hover:underline">
-                        <ChevronLeft size={16} className="mr-1" /> Voltar para Home
-                    </Link>
+        <PublicLayout>
+            <article className="min-h-screen bg-white pb-20">
+                {/* Header / Hero */}
+                <header className="bg-brand-50 pt-20 pb-16 px-6 text-center">
+                    <div className="max-w-3xl mx-auto">
+                        <Link href="/" className="inline-flex items-center text-pink-700 font-medium mb-8 hover:underline">
+                            <ChevronLeft size={16} className="mr-1" /> Voltar para Home
+                        </Link>
 
-                    <div className="inline-block bg-pink-100 text-pink-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider mb-4">
-                        {frontmatter.category}
+                        <div className="inline-block bg-pink-100 text-pink-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider mb-4">
+                            {frontmatter.category}
+                        </div>
+
+                        <h1 className="text-3xl md:text-5xl font-extrabold text-gray-900 leading-tight mb-6">
+                            {frontmatter.title}
+                        </h1>
+
+                        <div className="flex items-center justify-center gap-2 text-gray-500 text-sm">
+                            <span>Por <strong className="text-gray-900">{frontmatter.author}</strong></span>
+                            <span>•</span>
+                            <span>Atualizado em {frontmatter.updatedAt}</span>
+                        </div>
                     </div>
+                </header>
 
-                    <h1 className="text-3xl md:text-5xl font-extrabold text-gray-900 leading-tight mb-6">
-                        {frontmatter.title}
-                    </h1>
-
-                    <div className="flex items-center justify-center gap-2 text-gray-500 text-sm">
-                        <span>Por <strong className="text-gray-900">{frontmatter.author}</strong></span>
-                        <span>•</span>
-                        <span>Atualizado em {frontmatter.updatedAt}</span>
+                {/* MDX Content */}
+                <div className="max-w-3xl mx-auto px-6 py-12">
+                    <div className="prose prose-lg prose-pink mx-auto">
+                        <MDXRemote source={content} components={components} />
                     </div>
                 </div>
-            </header>
 
-            {/* MDX Content */}
-            <div className="max-w-3xl mx-auto px-6 py-12">
-                <div className="prose prose-lg prose-pink mx-auto">
-                    <MDXRemote source={content} components={components} />
-                </div>
-            </div>
-
-            {/* JSON-LD Schema (Legacy support) */}
-            <script
-                type="application/ld+json"
-                dangerouslySetInnerHTML={{
-                    __html: JSON.stringify(
-                        frontmatter.isReview
-                            ? {
-                                "@context": "https://schema.org",
-                                "@type": "Product",
-                                "name": frontmatter.productName,
-                                "image": frontmatter.featuredImage ? [`https://achadosvipdaisa.com.br${frontmatter.featuredImage}`] : [],
-                                "description": frontmatter.excerpt,
-                                "brand": {
-                                    "@type": "Brand",
-                                    "name": "Shopee/Generic"
-                                },
-                                "offers": {
-                                    "@type": "Offer",
-                                    "url": frontmatter.affiliateLink,
-                                    "priceCurrency": "BRL",
-                                    "price": frontmatter.productPrice,
-                                    "availability": "https://schema.org/InStock"
-                                },
-                                "review": {
-                                    "@type": "Review",
-                                    "reviewRating": {
-                                        "@type": "Rating",
-                                        "ratingValue": frontmatter.rating,
-                                        "bestRating": "5"
+                {/* JSON-LD Schema (Legacy support) */}
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{
+                        __html: JSON.stringify(
+                            frontmatter.isReview
+                                ? {
+                                    "@context": "https://schema.org",
+                                    "@type": "Product",
+                                    "name": frontmatter.productName,
+                                    "image": frontmatter.featuredImage ? [`https://achadosvipdaisa.com.br${frontmatter.featuredImage}`] : [],
+                                    "description": frontmatter.excerpt,
+                                    "brand": {
+                                        "@type": "Brand",
+                                        "name": "Shopee/Generic"
                                     },
+                                    "offers": {
+                                        "@type": "Offer",
+                                        "url": frontmatter.affiliateLink,
+                                        "priceCurrency": "BRL",
+                                        "price": frontmatter.productPrice,
+                                        "availability": "https://schema.org/InStock"
+                                    },
+                                    "review": {
+                                        "@type": "Review",
+                                        "reviewRating": {
+                                            "@type": "Rating",
+                                            "ratingValue": frontmatter.rating,
+                                            "bestRating": "5"
+                                        },
+                                        "author": {
+                                            "@type": "Person",
+                                            "name": frontmatter.author
+                                        }
+                                    }
+                                }
+                                : {
+                                    "@context": "https://schema.org",
+                                    "@type": "BlogPosting",
+                                    "headline": frontmatter.title,
+                                    "image": frontmatter.featuredImage ? [`https://achadosvipdaisa.com.br${frontmatter.featuredImage}`] : [],
                                     "author": {
                                         "@type": "Person",
                                         "name": frontmatter.author
-                                    }
+                                    },
+                                    "publisher": {
+                                        "@type": "Organization",
+                                        "name": "Achados Vip da Isa",
+                                        "logo": {
+                                            "@type": "ImageObject",
+                                            "url": "https://achadosvipdaisa.com.br/logo.png"
+                                        }
+                                    },
+                                    "datePublished": frontmatter.date,
+                                    "dateModified": frontmatter.updatedAt,
+                                    "description": frontmatter.excerpt
                                 }
-                            }
-                            : {
-                                "@context": "https://schema.org",
-                                "@type": "BlogPosting",
-                                "headline": frontmatter.title,
-                                "image": frontmatter.featuredImage ? [`https://achadosvipdaisa.com.br${frontmatter.featuredImage}`] : [],
-                                "author": {
-                                    "@type": "Person",
-                                    "name": frontmatter.author
-                                },
-                                "publisher": {
-                                    "@type": "Organization",
-                                    "name": "Achados Vip da Isa",
-                                    "logo": {
-                                        "@type": "ImageObject",
-                                        "url": "https://achadosvipdaisa.com.br/logo.png"
-                                    }
-                                },
-                                "datePublished": frontmatter.date,
-                                "dateModified": frontmatter.updatedAt,
-                                "description": frontmatter.excerpt
-                            }
-                    )
-                }}
-            />
-        </article>
+                        )
+                    }}
+                />
+            </article>
+        </PublicLayout>
     );
 }
 
