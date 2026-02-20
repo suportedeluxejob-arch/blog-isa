@@ -6,12 +6,10 @@ import StarterKit from "@tiptap/starter-kit";
 import ImageExtension from "@tiptap/extension-image";
 import LinkExtension from "@tiptap/extension-link";
 import { BlogPost, getCategories, Category } from "@/services/postService";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { storage } from "@/lib/firebase";
 import {
-    Loader2, Upload, Image as ImageIcon, Save, Eye, ArrowLeft,
+    Loader2, Save, ArrowLeft,
     Bold, Italic, List, ListOrdered, Quote, Heading2, Link2, ImagePlus,
-    Globe, Search, Target, AlertCircle, CheckCircle2, Info
+    Globe, Search, Target, AlertCircle, CheckCircle2, Info, LinkIcon
 } from "lucide-react";
 import Link from "next/link";
 
@@ -47,7 +45,6 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
     const [affiliateLink, setAffiliateLink] = useState(initialPost?.affiliateLink || "");
 
     // State
-    const [isUploading, setIsUploading] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [categories, setCategories] = useState<Category[]>([]);
     const [activeSection, setActiveSection] = useState<"content" | "seo" | "product">("content");
@@ -70,41 +67,11 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
         },
     });
 
-    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-
-        setIsUploading(true);
-        try {
-            const storageRef = ref(storage, `blog-images/${Date.now()}-${file.name}`);
-            const snapshot = await uploadBytes(storageRef, file);
-            const url = await getDownloadURL(snapshot.ref);
-            setCoverImage(url);
-        } catch (error) {
-            console.error("Upload failed", error);
-            alert("Falha no upload da imagem");
-        } finally {
-            setIsUploading(false);
+    const handleEditorImageInsert = () => {
+        const url = prompt("Cole a URL da imagem:");
+        if (url && editor) {
+            editor.chain().focus().setImage({ src: url, alt: "imagem" }).run();
         }
-    };
-
-    const handleEditorImageUpload = async () => {
-        const input = document.createElement("input");
-        input.type = "file";
-        input.accept = "image/*";
-        input.onchange = async (e: any) => {
-            const file = e.target.files?.[0];
-            if (!file || !editor) return;
-            try {
-                const storageRef = ref(storage, `blog-images/${Date.now()}-${file.name}`);
-                const snapshot = await uploadBytes(storageRef, file);
-                const url = await getDownloadURL(snapshot.ref);
-                editor.chain().focus().setImage({ src: url, alt: file.name }).run();
-            } catch (error) {
-                alert("Falha no upload da imagem");
-            }
-        };
-        input.click();
     };
 
     const handleSave = async () => {
@@ -114,33 +81,37 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
 
         setIsSaving(true);
         try {
-            await onSave({
+            // IMPORTANT: Firestore does NOT accept undefined values!
+            // Use empty strings instead of undefined
+            const postData: any = {
                 title,
                 slug,
-                excerpt,
-                coverImage,
+                excerpt: excerpt || "",
+                coverImage: coverImage || "",
                 content: editor.getHTML(),
-                category,
+                category: category || "",
                 articleType,
                 status,
                 author,
-                seoTitle,
-                seoDescription,
-                seoKeywords,
-                focusKeyword,
-                canonicalUrl,
-                ogTitle,
-                ogDescription,
-                ogImage: coverImage,
+                seoTitle: seoTitle || "",
+                seoDescription: seoDescription || "",
+                seoKeywords: seoKeywords || "",
+                focusKeyword: focusKeyword || "",
+                canonicalUrl: canonicalUrl || "",
+                ogTitle: ogTitle || "",
+                ogDescription: ogDescription || "",
+                ogImage: coverImage || "",
                 schemaType: articleType === "sales" ? "Product" : "Article",
-                productName: articleType === "sales" ? productName : undefined,
-                productPrice: articleType === "sales" ? productPrice : undefined,
-                productRating: articleType === "sales" ? productRating : undefined,
-                affiliateLink: articleType === "sales" ? affiliateLink : undefined,
-            } as any);
-        } catch (error) {
+                productName: articleType === "sales" ? (productName || "") : "",
+                productPrice: articleType === "sales" ? (productPrice || "") : "",
+                productRating: articleType === "sales" ? (productRating || 0) : 0,
+                affiliateLink: articleType === "sales" ? (affiliateLink || "") : "",
+            };
+
+            await onSave(postData);
+        } catch (error: any) {
             console.error("Save failed", error);
-            alert("Falha ao salvar");
+            alert(`Falha ao salvar: ${error?.message || "Erro desconhecido"}`);
         } finally {
             setIsSaving(false);
         }
@@ -287,20 +258,26 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
                                 />
                             </div>
 
-                            {/* Cover Image */}
+                            {/* Cover Image - via URL */}
                             <div className="rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
-                                <label className="block text-sm font-semibold text-gray-700 mb-3">Imagem de Capa</label>
-                                <div className="flex items-center gap-4">
+                                <label className="block text-sm font-semibold text-gray-700 mb-3">Imagem de Capa (URL)</label>
+                                <div className="flex flex-col gap-3">
+                                    <div className="flex items-center gap-2">
+                                        <LinkIcon size={16} className="text-gray-400 flex-shrink-0" />
+                                        <input
+                                            type="url"
+                                            value={coverImage}
+                                            onChange={(e) => setCoverImage(e.target.value)}
+                                            className="w-full rounded-lg border border-gray-200 p-3 text-sm focus:border-pink-400 focus:outline-none focus:ring-2 focus:ring-pink-100"
+                                            placeholder="https://exemplo.com/imagem.jpg"
+                                        />
+                                    </div>
                                     {coverImage && (
-                                        <div className="relative h-32 w-48 overflow-hidden rounded-lg border">
-                                            <img src={coverImage} alt="Capa" className="h-full w-full object-cover" />
+                                        <div className="relative h-40 w-full overflow-hidden rounded-lg border border-gray-200 bg-gray-50">
+                                            <img src={coverImage} alt="Preview" className="h-full w-full object-contain" />
                                         </div>
                                     )}
-                                    <label className="flex cursor-pointer items-center gap-2 rounded-lg border-2 border-dashed border-gray-200 px-6 py-4 hover:border-pink-300 hover:bg-pink-50/50 transition-colors">
-                                        {isUploading ? <Loader2 className="animate-spin text-pink-600" /> : <Upload size={20} className="text-gray-400" />}
-                                        <span className="text-sm text-gray-500">{coverImage ? "Trocar" : "Fazer Upload"}</span>
-                                        <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
-                                    </label>
+                                    <p className="text-xs text-gray-400">Cole a URL de qualquer imagem da internet (Shopee, Amazon, etc.)</p>
                                 </div>
                             </div>
 
@@ -332,7 +309,7 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
                                         const url = prompt("URL do link:");
                                         if (url) editor?.chain().focus().setLink({ href: url }).run();
                                     }} active={editor?.isActive("link")} tooltip="Link" />
-                                    <ToolbarButton icon={<ImagePlus size={16} />} onClick={handleEditorImageUpload} tooltip="Inserir Imagem" />
+                                    <ToolbarButton icon={<ImagePlus size={16} />} onClick={handleEditorImageInsert} tooltip="Inserir Imagem (URL)" />
                                 </div>
                                 <EditorContent editor={editor} />
                             </div>

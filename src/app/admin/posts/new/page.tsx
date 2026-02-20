@@ -9,12 +9,15 @@ export default function NewPostPage() {
     const router = useRouter();
 
     const handleSave = async (postData: any) => {
-        await createPost({
+        const dataToSave: any = {
             ...postData,
             createdAt: Timestamp.now(),
             updatedAt: Timestamp.now(),
-            publishedAt: postData.status === "published" ? Timestamp.now() : undefined,
-        });
+        };
+        if (postData.status === "published") {
+            dataToSave.publishedAt = Timestamp.now();
+        }
+        await createPost(dataToSave);
         router.push("/admin");
     };
 
