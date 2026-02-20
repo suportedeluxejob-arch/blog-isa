@@ -1,13 +1,53 @@
-
 import Link from "next/link";
+import { getCategories } from "@/services/postService";
+import { getAllReviews } from "@/lib/mdx";
 
-export function Navbar() {
-    const links = [
-        { label: "Home", href: "/" },
-        { label: "Casa Inteligente", href: "/categories/casa-inteligente" },
-        { label: "Beleza & Autocuidado", href: "/categories/beleza-e-autocuidado" },
-        // { label: "Tech", href: "/categories/tech" }, // Commented out until we have tech content
-    ];
+export async function Navbar() {
+    // Get categories from Firestore
+    let firestoreCategories: { label: string; href: string }[] = [];
+    try {
+        const cats = await getCategories();
+        firestoreCategories = cats.map((cat) => ({
+            label: cat.name,
+            href: `/categories/${cat.slug}`,
+        }));
+    } catch (error) {
+        console.warn("Could not load Firestore categories:", error);
+    }
+
+    // Get categories from MDX articles (legacy)
+    let mdxCategories: { label: string; href: string }[] = [];
+    try {
+        const reviews = await getAllReviews();
+        const uniqueCats = Array.from(
+            new Set(reviews.map((r) => r.frontmatter.category).filter(Boolean))
+        );
+        mdxCategories = uniqueCats.map((cat) => ({
+            label: cat,
+            href: `/categories/${cat.toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, "")}`,
+        }));
+    } catch (error) {
+        console.warn("Could not load MDX categories:", error);
+    }
+
+    // Merge categories, avoiding duplicates by href
+    const seenHrefs = new Set<string>();
+    const allLinks: { label: string; href: string }[] = [{ label: "Home", href: "/" }];
+
+    // Firestore categories take priority
+    for (const cat of firestoreCategories) {
+        if (!seenHrefs.has(cat.href)) {
+            seenHrefs.add(cat.href);
+            allLinks.push(cat);
+        }
+    }
+    // Then MDX categories (if not already added)
+    for (const cat of mdxCategories) {
+        if (!seenHrefs.has(cat.href)) {
+            seenHrefs.add(cat.href);
+            allLinks.push(cat);
+        }
+    }
 
     return (
         <nav className="bg-white border-b border-gray-100 sticky top-0 z-50 shadow-sm">
@@ -19,7 +59,7 @@ export function Navbar() {
 
                 {/* Desktop Menu */}
                 <div className="hidden md:flex items-center gap-8">
-                    {links.map((link) => (
+                    {allLinks.map((link) => (
                         <Link
                             key={link.href}
                             href={link.href}
@@ -30,9 +70,8 @@ export function Navbar() {
                     ))}
                 </div>
 
-                {/* Mobile Menu Placeholder (Simple for now) */}
+                {/* Mobile Menu Placeholder */}
                 <div className="md:hidden text-gray-400 text-sm">
-                    {/* Can be expanded later */}
                     Menu
                 </div>
             </div>
