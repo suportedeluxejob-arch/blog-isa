@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { getAllReviews } from "@/lib/mdx";
+import { getAllReviews as getAllMdxReviews } from "@/lib/mdx";
+import { getPosts as getFirestorePosts } from "@/services/postService";
 
 export const metadata = {
   title: "Achados Vip da Isa - Reviews Sinceros de Casa & Tech",
@@ -7,7 +8,32 @@ export const metadata = {
 };
 
 export default async function Home() {
-  const reviews = await getAllReviews();
+  const mdxReviews = await getAllMdxReviews();
+  const firestorePosts = await getFirestorePosts();
+
+  // Standardize format
+  const formattedMdx = mdxReviews.map(review => ({
+    slug: review.slug,
+    title: review.frontmatter.title,
+    excerpt: review.frontmatter.excerpt,
+    coverImage: review.frontmatter.featuredImage,
+    category: review.frontmatter.category,
+    date: review.frontmatter.date,
+    origin: 'mdx'
+  }));
+
+  const formattedFirestore = firestorePosts.map(post => ({
+    slug: post.slug,
+    title: post.title,
+    excerpt: post.excerpt,
+    coverImage: post.coverImage,
+    category: "Blog", // Default or add to schema
+    date: post.createdAt?.toDate().toLocaleDateString(),
+    origin: 'firestore'
+  }));
+
+  // Combine and sort by date (simplified)
+  const allPosts = [...formattedFirestore, ...formattedMdx];
 
   return (
     <div className="min-h-screen bg-gray-50 font-sans pb-20">
@@ -28,7 +54,7 @@ export default async function Home() {
         </h2>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {reviews.map((post) => (
+          {allPosts.map((post) => (
             <Link
               key={post.slug}
               href={`/reviews/${post.slug}`}
@@ -36,25 +62,25 @@ export default async function Home() {
             >
               {/* Image Placeholder (or Real Image) */}
               <div className="h-48 bg-gray-200 relative overflow-hidden">
-                {post.frontmatter.featuredImage && (
+                {post.coverImage && (
                   <div className="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-500"
-                    style={{ backgroundImage: `url(${post.frontmatter.featuredImage})` }} />
+                    style={{ backgroundImage: `url(${post.coverImage})` }} />
                 )}
                 <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-pink-600 uppercase tracking-wide">
-                  {post.frontmatter.category}
+                  {post.category}
                 </div>
               </div>
 
               <div className="p-6 flex-1 flex flex-col">
                 <h3 className="text-xl font-bold text-gray-900 group-hover:text-pink-600 transition-colors mb-3">
-                  {post.frontmatter.title}
+                  {post.title}
                 </h3>
                 <p className="text-gray-600 text-sm line-clamp-3 mb-6 flex-1">
-                  {post.frontmatter.excerpt}
+                  {post.excerpt}
                 </p>
 
                 <div className="flex items-center justify-between text-sm text-gray-500 pt-4 border-t border-gray-50">
-                  <span>{post.frontmatter.date}</span>
+                  <span>{post.date}</span>
                   <span className="font-medium text-pink-600">Ler Review &rarr;</span>
                 </div>
               </div>
@@ -62,7 +88,7 @@ export default async function Home() {
           ))}
 
           {/* Placeholder for when we have few posts */}
-          {reviews.length === 0 && (
+          {allPosts.length === 0 && (
             <div className="col-span-full text-center py-20 text-gray-500">
               Nenhum review publicado ainda. Volte em breve!
             </div>

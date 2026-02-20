@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
-import { getReviewBySlug, getAllReviews } from "@/lib/mdx";
+import { getReviewBySlug as getMdxReviewBySlug, getAllReviews as getAllMdxReviews } from "@/lib/mdx";
+import { getPostBySlug as getFirestorePostBySlug, getPosts as getFirestorePosts } from "@/services/postService";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { AffiliateLink } from "@/components/mdx/affiliate-link";
 import { ProsConsList } from "@/components/mdx/pros-cons-list";
@@ -26,33 +27,87 @@ interface PageProps {
 }
 
 export async function generateStaticParams() {
-    const reviews = await getAllReviews();
-    return reviews.map((review) => ({
-        slug: review.slug,
+    const mdxReviews = await getAllMdxReviews();
+    const firestorePosts = await getFirestorePosts();
+
+    const allSlugs = new Set([
+        ...mdxReviews.map((r) => r.slug),
+        ...firestorePosts.map((p) => p.slug)
+    ]);
+
+    return Array.from(allSlugs).map((slug) => ({
+        slug,
     }));
 }
 
 export async function generateMetadata({ params }: PageProps) {
     const { slug } = await params;
-    const review = await getReviewBySlug(slug);
 
-    if (!review) return {};
+    // Try Firestore first
+    const firestorePost = await getFirestorePostBySlug(slug);
+    if (firestorePost) {
+        return {
+            title: firestorePost.seoTitle || `${firestorePost.title} | Achados Vip da Isa`,
+            description: firestorePost.seoDescription || firestorePost.excerpt,
+            keywords: firestorePost.seoKeywords,
+        };
+    }
 
-    return {
-        title: `${review.frontmatter.title} | Achados Vip da Isa`,
-        description: review.frontmatter.excerpt,
-    };
+    // Fallback to MDX
+    const mdxReview = await getMdxReviewBySlug(slug);
+    if (mdxReview) {
+        return {
+            title: `${mdxReview.frontmatter.title} | Achados Vip da Isa`,
+            description: mdxReview.frontmatter.excerpt,
+        };
+    }
+
+    return {};
 }
 
 export default async function ReviewPage({ params }: PageProps) {
     const { slug } = await params;
-    const review = await getReviewBySlug(slug);
 
-    if (!review) {
+    // 1. Try Firestore
+    const firestorePost = await getFirestorePostBySlug(slug);
+
+    if (firestorePost) {
+        return (
+            <article className="min-h-screen bg-white pb-20">
+                <header className="bg-brand-50 pt-20 pb-16 px-6 text-center">
+                    <div className="max-w-3xl mx-auto">
+                        <Link href="/" className="inline-flex items-center text-pink-700 font-medium mb-8 hover:underline">
+                            <ChevronLeft size={16} className="mr-1" /> Voltar para Home
+                        </Link>
+
+                        <h1 className="text-3xl md:text-5xl font-extrabold text-gray-900 leading-tight mb-6">
+                            {firestorePost.title}
+                        </h1>
+
+                        <div className="flex items-center justify-center gap-2 text-gray-500 text-sm">
+                            <span>Atualizado em {firestorePost.updatedAt?.toDate().toLocaleDateString()}</span>
+                        </div>
+                    </div>
+                </header>
+
+                <div className="max-w-3xl mx-auto px-6 py-12">
+                    <div
+                        className="prose prose-lg prose-pink mx-auto"
+                        dangerouslySetInnerHTML={{ __html: firestorePost.content }}
+                    />
+                </div>
+            </article>
+        );
+    }
+
+    // 2. Fallback to MDX
+    const mdxReview = await getMdxReviewBySlug(slug);
+
+    if (!mdxReview) {
         notFound();
     }
 
-    const { frontmatter, content } = review;
+    const { frontmatter, content } = mdxReview;
 
     return (
         <article className="min-h-screen bg-white pb-20">
@@ -86,8 +141,7 @@ export default async function ReviewPage({ params }: PageProps) {
                 </div>
             </div>
 
-            {/* JSON-LD Schema */}
-            {/* JSON-LD Schema */}
+            {/* JSON-LD Schema (Legacy support) */}
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{
@@ -150,3 +204,4 @@ export default async function ReviewPage({ params }: PageProps) {
         </article>
     );
 }
+
