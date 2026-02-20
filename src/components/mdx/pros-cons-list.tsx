@@ -5,7 +5,8 @@ interface ProsConsListProps {
     cons: string[];
 }
 
-export function ProsConsList({ pros, cons }: ProsConsListProps) {
+export function ProsConsList({ pros = [], cons = [] }: ProsConsListProps) {
+    if (!pros || !cons) return null; // Additional safety check
     return (
         <div className="grid md:grid-cols-2 gap-6 my-8">
             <div className="bg-green-50 border border-green-200 rounded-xl p-6">

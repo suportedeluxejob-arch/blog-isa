@@ -29,33 +29,48 @@ export interface BlogPost {
 const POSTS_COLLECTION = "posts";
 
 export const getPosts = async (): Promise<BlogPost[]> => {
-    const q = query(collection(db, POSTS_COLLECTION), orderBy("createdAt", "desc"));
-    const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-    })) as BlogPost[];
+    try {
+        const q = query(collection(db, POSTS_COLLECTION), orderBy("createdAt", "desc"));
+        const querySnapshot = await getDocs(q);
+        return querySnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+        })) as BlogPost[];
+    } catch (error) {
+        console.warn("Error fetching posts from Firestore (likely permission issue or offline):", error);
+        return [];
+    }
 };
 
 export const getPostById = async (id: string): Promise<BlogPost | null> => {
-    const docRef = doc(db, POSTS_COLLECTION, id);
-    const docSnap = await getDoc(docRef);
+    try {
+        const docRef = doc(db, POSTS_COLLECTION, id);
+        const docSnap = await getDoc(docRef);
 
-    if (docSnap.exists()) {
-        return { id: docSnap.id, ...docSnap.data() } as BlogPost;
-    } else {
+        if (docSnap.exists()) {
+            return { id: docSnap.id, ...docSnap.data() } as BlogPost;
+        } else {
+            return null;
+        }
+    } catch (error) {
+        console.error("Error fetching post by ID:", error);
         return null;
     }
 };
 
 export const getPostBySlug = async (slug: string): Promise<BlogPost | null> => {
-    // Note: In a real app, you should index 'slug' and use a query. 
-    // For now, client-side filtering or a simple query is fine given low volume.
-    // Better: Query
-    const q = query(collection(db, POSTS_COLLECTION)); // Optimization: Add where clause if slug is indexed
-    const querySnapshot = await getDocs(q);
-    const doc = querySnapshot.docs.find(d => d.data().slug === slug);
-    return doc ? { id: doc.id, ...doc.data() } as BlogPost : null;
+    try {
+        // Note: In a real app, you should index 'slug' and use a query. 
+        // For now, client-side filtering or a simple query is fine given low volume.
+        // Better: Query
+        const q = query(collection(db, POSTS_COLLECTION)); // Optimization: Add where clause if slug is indexed
+        const querySnapshot = await getDocs(q);
+        const doc = querySnapshot.docs.find(d => d.data().slug === slug);
+        return doc ? { id: doc.id, ...doc.data() } as BlogPost : null;
+    } catch (error) {
+        console.warn(`Error fetching post by slug '${slug}':`, error);
+        return null;
+    }
 };
 
 
