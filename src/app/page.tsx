@@ -7,6 +7,8 @@ export const metadata = {
   description: "Curadoria de ofertas e reviews testados pela Isabelle. Encontre os melhores gadgets para sua casa.",
 };
 
+export const revalidate = 60; // Revalidate every 60 seconds for real-time updates
+
 export default async function Home() {
   const mdxReviews = await getAllMdxReviews();
   const firestorePosts = await getFirestorePosts();
@@ -19,18 +21,22 @@ export default async function Home() {
     coverImage: review.frontmatter.featuredImage,
     category: review.frontmatter.category,
     date: review.frontmatter.date,
+    articleType: "sales" as const,
     origin: 'mdx'
   }));
 
-  const formattedFirestore = firestorePosts.map(post => ({
-    slug: post.slug,
-    title: post.title,
-    excerpt: post.excerpt,
-    coverImage: post.coverImage,
-    category: "Blog", // Default or add to schema
-    date: post.createdAt?.toDate().toLocaleDateString(),
-    origin: 'firestore'
-  }));
+  const formattedFirestore = firestorePosts
+    .filter(post => post.status === "published") // Only show published posts
+    .map(post => ({
+      slug: post.slug,
+      title: post.title,
+      excerpt: post.excerpt,
+      coverImage: post.coverImage,
+      category: post.category || "Blog",
+      date: post.createdAt?.toDate().toLocaleDateString("pt-BR"),
+      articleType: post.articleType || "educational",
+      origin: 'firestore'
+    }));
 
   // Combine and sort by date (simplified)
   const allPosts = [...formattedFirestore, ...formattedMdx];
@@ -60,14 +66,21 @@ export default async function Home() {
               href={`/reviews/${post.slug}`}
               className="group bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 overflow-hidden flex flex-col"
             >
-              {/* Image Placeholder (or Real Image) */}
+              {/* Image */}
               <div className="h-48 bg-gray-200 relative overflow-hidden">
                 {post.coverImage && (
                   <div className="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-500"
                     style={{ backgroundImage: `url(${post.coverImage})` }} />
                 )}
-                <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-pink-600 uppercase tracking-wide">
-                  {post.category}
+                <div className="absolute top-4 left-4 flex gap-2">
+                  <span className="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-pink-600 uppercase tracking-wide">
+                    {post.category}
+                  </span>
+                  {post.articleType === "educational" && (
+                    <span className="bg-purple-500/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-white uppercase tracking-wide">
+                      📚 Guia
+                    </span>
+                  )}
                 </div>
               </div>
 
@@ -87,7 +100,6 @@ export default async function Home() {
             </Link>
           ))}
 
-          {/* Placeholder for when we have few posts */}
           {allPosts.length === 0 && (
             <div className="col-span-full text-center py-20 text-gray-500">
               Nenhum review publicado ainda. Volte em breve!

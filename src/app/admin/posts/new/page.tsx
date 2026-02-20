@@ -13,13 +13,13 @@ export default function NewPostPage() {
             ...postData,
             createdAt: Timestamp.now(),
             updatedAt: Timestamp.now(),
+            publishedAt: postData.status === "published" ? Timestamp.now() : undefined,
         });
         router.push("/admin");
     };
 
     return (
-        <div className="container mx-auto max-w-5xl py-8">
-            <h1 className="mb-8 text-3xl font-bold text-gray-900">Create New Post</h1>
+        <div className="py-4">
             <PostEditor onSave={handleSave} />
         </div>
     );
