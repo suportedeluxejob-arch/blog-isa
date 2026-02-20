@@ -8,10 +8,10 @@ import LinkExtension from "@tiptap/extension-link";
 import { BlogPost, getCategories, Category, FaqItem, ContentImage, RatingCriteria } from "@/services/postService";
 import {
     Loader2, Save, ArrowLeft,
-    Bold, Italic, List, ListOrdered, Quote, Heading2, Link2, ImagePlus,
+    Bold, Italic, List, ListOrdered, Quote, Heading2, Heading3, Link2, ImagePlus,
     Globe, Search, Target, AlertCircle, CheckCircle2, Info, LinkIcon,
     Plus, Trash2, Star, GripVertical, HelpCircle, ImageIcon, ThumbsUp, ThumbsDown,
-    ChevronDown, ChevronUp, MessageSquare, Award
+    ChevronDown, ChevronUp, MessageSquare, Award, Minus, Type, Pilcrow, Undo, Redo
 } from "lucide-react";
 import Link from "next/link";
 
@@ -65,7 +65,12 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
 
     const editor = useEditor({
         extensions: [
-            StarterKit,
+            StarterKit.configure({
+                heading: {
+                    levels: [2, 3],
+                },
+                horizontalRule: {},
+            }),
             ImageExtension,
             LinkExtension.configure({ openOnClick: false }),
         ],
@@ -73,6 +78,19 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
         editorProps: {
             attributes: {
                 class: "prose prose-sm sm:prose lg:prose-lg mx-auto focus:outline-none min-h-[400px] p-6",
+            },
+            // Sanitize pasted content: convert <br><br> to proper paragraphs
+            transformPastedHTML(html: string) {
+                // Replace double line breaks with paragraph separators
+                let cleaned = html
+                    .replace(/<br\s*\/?><br\s*\/?>/gi, '</p><p>')
+                    .replace(/<br\s*\/?>/gi, '</p><p>');
+                // Convert bold-only lines to H2 (common pattern from pasted content)
+                cleaned = cleaned.replace(
+                    /<p>\s*<(strong|b)>([^<]{10,100})<\/(strong|b)>\s*<\/p>/gi,
+                    '<h2>$2</h2>'
+                );
+                return cleaned;
             },
         },
     });
@@ -333,22 +351,213 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
 
                             {/* Editor */}
                             <div className="rounded-xl border border-gray-100 bg-white shadow-sm overflow-hidden">
-                                <div className="flex flex-wrap items-center gap-1 border-b border-gray-100 bg-gray-50/50 px-3 py-2">
-                                    <ToolbarButton icon={<Bold size={16} />} onClick={() => editor?.chain().focus().toggleBold().run()} active={editor?.isActive("bold")} tooltip="Negrito" />
-                                    <ToolbarButton icon={<Italic size={16} />} onClick={() => editor?.chain().focus().toggleItalic().run()} active={editor?.isActive("italic")} tooltip="Itálico" />
-                                    <div className="mx-1 h-5 w-px bg-gray-200" />
-                                    <ToolbarButton icon={<Heading2 size={16} />} onClick={() => editor?.chain().focus().toggleHeading({ level: 2 }).run()} active={editor?.isActive("heading", { level: 2 })} tooltip="Subtítulo" />
-                                    <ToolbarButton icon={<List size={16} />} onClick={() => editor?.chain().focus().toggleBulletList().run()} active={editor?.isActive("bulletList")} tooltip="Lista" />
-                                    <ToolbarButton icon={<ListOrdered size={16} />} onClick={() => editor?.chain().focus().toggleOrderedList().run()} active={editor?.isActive("orderedList")} tooltip="Lista Numerada" />
-                                    <ToolbarButton icon={<Quote size={16} />} onClick={() => editor?.chain().focus().toggleBlockquote().run()} active={editor?.isActive("blockquote")} tooltip="Citação" />
-                                    <div className="mx-1 h-5 w-px bg-gray-200" />
-                                    <ToolbarButton icon={<Link2 size={16} />} onClick={() => {
-                                        const url = prompt("URL do link:");
-                                        if (url) editor?.chain().focus().setLink({ href: url }).run();
-                                    }} active={editor?.isActive("link")} tooltip="Link" />
-                                    <ToolbarButton icon={<ImagePlus size={16} />} onClick={handleEditorImageInsert} tooltip="Inserir Imagem (URL)" />
+                                {/* === FORMAT GUIDE === */}
+                                <div className="bg-blue-50 border-b border-blue-100 px-4 py-3 flex items-start gap-2.5">
+                                    <Info size={16} className="text-blue-500 mt-0.5 flex-shrink-0" />
+                                    <div className="text-xs text-blue-700 leading-relaxed">
+                                        <strong>Dica SEO:</strong> Selecione o texto e use os botões abaixo. Use <kbd className="bg-white border border-blue-200 rounded px-1.5 py-0.5 text-[10px] font-mono">H2</kbd> para subtítulos da seção e <kbd className="bg-white border border-blue-200 rounded px-1.5 py-0.5 text-[10px] font-mono">H3</kbd> para sub-subtítulos. Cada <strong>Enter</strong> cria um novo parágrafo.
+                                    </div>
                                 </div>
+
+                                {/* === TOOLBAR === */}
+                                <div className="border-b border-gray-100 bg-gray-50/80 px-3 py-2">
+                                    <div className="flex flex-wrap items-center gap-1">
+                                        {/* Text Format Group */}
+                                        <div className="flex items-center gap-0.5 bg-white rounded-lg border border-gray-200 px-1 py-0.5">
+                                            <ToolbarButtonLabeled
+                                                icon={<Pilcrow size={14} />}
+                                                label="Normal"
+                                                onClick={() => editor?.chain().focus().setParagraph().run()}
+                                                active={editor?.isActive("paragraph") && !editor?.isActive("heading")}
+                                            />
+                                            <ToolbarButtonLabeled
+                                                icon={<Heading2 size={14} />}
+                                                label="H2"
+                                                onClick={() => editor?.chain().focus().toggleHeading({ level: 2 }).run()}
+                                                active={editor?.isActive("heading", { level: 2 })}
+                                                highlight="purple"
+                                            />
+                                            <ToolbarButtonLabeled
+                                                icon={<Heading3 size={14} />}
+                                                label="H3"
+                                                onClick={() => editor?.chain().focus().toggleHeading({ level: 3 }).run()}
+                                                active={editor?.isActive("heading", { level: 3 })}
+                                                highlight="purple"
+                                            />
+                                        </div>
+
+                                        <div className="mx-1 h-6 w-px bg-gray-200" />
+
+                                        {/* Inline Format Group */}
+                                        <div className="flex items-center gap-0.5 bg-white rounded-lg border border-gray-200 px-1 py-0.5">
+                                            <ToolbarButtonLabeled
+                                                icon={<Bold size={14} />}
+                                                label="Negrito"
+                                                onClick={() => editor?.chain().focus().toggleBold().run()}
+                                                active={editor?.isActive("bold")}
+                                            />
+                                            <ToolbarButtonLabeled
+                                                icon={<Italic size={14} />}
+                                                label="Itálico"
+                                                onClick={() => editor?.chain().focus().toggleItalic().run()}
+                                                active={editor?.isActive("italic")}
+                                            />
+                                        </div>
+
+                                        <div className="mx-1 h-6 w-px bg-gray-200" />
+
+                                        {/* Block Format Group */}
+                                        <div className="flex items-center gap-0.5 bg-white rounded-lg border border-gray-200 px-1 py-0.5">
+                                            <ToolbarButtonLabeled
+                                                icon={<List size={14} />}
+                                                label="Lista"
+                                                onClick={() => editor?.chain().focus().toggleBulletList().run()}
+                                                active={editor?.isActive("bulletList")}
+                                            />
+                                            <ToolbarButtonLabeled
+                                                icon={<ListOrdered size={14} />}
+                                                label="Numerada"
+                                                onClick={() => editor?.chain().focus().toggleOrderedList().run()}
+                                                active={editor?.isActive("orderedList")}
+                                            />
+                                            <ToolbarButtonLabeled
+                                                icon={<Quote size={14} />}
+                                                label="Citação"
+                                                onClick={() => editor?.chain().focus().toggleBlockquote().run()}
+                                                active={editor?.isActive("blockquote")}
+                                            />
+                                            <ToolbarButtonLabeled
+                                                icon={<Minus size={14} />}
+                                                label="Linha"
+                                                onClick={() => editor?.chain().focus().setHorizontalRule().run()}
+                                            />
+                                        </div>
+
+                                        <div className="mx-1 h-6 w-px bg-gray-200" />
+
+                                        {/* Media Group */}
+                                        <div className="flex items-center gap-0.5 bg-white rounded-lg border border-gray-200 px-1 py-0.5">
+                                            <ToolbarButtonLabeled
+                                                icon={<Link2 size={14} />}
+                                                label="Link"
+                                                onClick={() => {
+                                                    const url = prompt("URL do link:");
+                                                    if (url) editor?.chain().focus().setLink({ href: url }).run();
+                                                }}
+                                                active={editor?.isActive("link")}
+                                            />
+                                            <ToolbarButtonLabeled
+                                                icon={<ImagePlus size={14} />}
+                                                label="Imagem"
+                                                onClick={handleEditorImageInsert}
+                                            />
+                                        </div>
+
+                                        <div className="mx-1 h-6 w-px bg-gray-200" />
+
+                                        {/* Undo/Redo */}
+                                        <div className="flex items-center gap-0.5">
+                                            <button
+                                                onClick={() => editor?.chain().focus().undo().run()}
+                                                disabled={!editor?.can().undo()}
+                                                className="rounded p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 disabled:opacity-30 transition-colors"
+                                                title="Desfazer"
+                                            >
+                                                <Undo size={14} />
+                                            </button>
+                                            <button
+                                                onClick={() => editor?.chain().focus().redo().run()}
+                                                disabled={!editor?.can().redo()}
+                                                className="rounded p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 disabled:opacity-30 transition-colors"
+                                                title="Refazer"
+                                            >
+                                                <Redo size={14} />
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    {/* Current format indicator */}
+                                    <div className="flex items-center gap-2 mt-2 text-[10px] text-gray-400">
+                                        <span>Formato atual:</span>
+                                        {editor?.isActive("heading", { level: 2 }) && <span className="bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-bold">H2 — Subtítulo</span>}
+                                        {editor?.isActive("heading", { level: 3 }) && <span className="bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-bold">H3 — Sub-subtítulo</span>}
+                                        {editor?.isActive("paragraph") && !editor?.isActive("heading") && <span className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded">Parágrafo</span>}
+                                        {editor?.isActive("bulletList") && <span className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded">Lista</span>}
+                                        {editor?.isActive("blockquote") && <span className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded">Citação</span>}
+                                    </div>
+                                </div>
+
+                                {/* === EDITOR AREA === */}
+                                <style>{`
+                                    .ProseMirror h2 {
+                                        font-size: 1.5rem;
+                                        font-weight: 800;
+                                        color: #1a1a2e;
+                                        margin-top: 2rem;
+                                        margin-bottom: 0.75rem;
+                                        padding-bottom: 0.5rem;
+                                        border-bottom: 2px solid #f0f0f0;
+                                    }
+                                    .ProseMirror h3 {
+                                        font-size: 1.25rem;
+                                        font-weight: 700;
+                                        color: #2d2d44;
+                                        margin-top: 1.5rem;
+                                        margin-bottom: 0.5rem;
+                                    }
+                                    .ProseMirror p {
+                                        margin-bottom: 1rem;
+                                        line-height: 1.7;
+                                        color: #374151;
+                                    }
+                                    .ProseMirror blockquote {
+                                        border-left: 4px solid #ec4899;
+                                        background: #fdf2f8;
+                                        padding: 0.75rem 1rem;
+                                        border-radius: 0 0.5rem 0.5rem 0;
+                                        margin: 1rem 0;
+                                    }
+                                    .ProseMirror hr {
+                                        border: none;
+                                        border-top: 2px solid #f0f0f0;
+                                        margin: 2rem 0;
+                                    }
+                                    .ProseMirror ul, .ProseMirror ol {
+                                        padding-left: 1.5rem;
+                                        margin-bottom: 1rem;
+                                    }
+                                    .ProseMirror li {
+                                        margin-bottom: 0.5rem;
+                                    }
+                                    .ProseMirror img {
+                                        border-radius: 0.75rem;
+                                        max-width: 100%;
+                                        margin: 1.5rem auto;
+                                    }
+                                    .ProseMirror p.is-editor-empty:first-child::before {
+                                        content: 'Comece a escrever seu artigo...\A\AUse H2 para criar subtítulos das seções.\ACada Enter cria um novo parágrafo.';
+                                        white-space: pre-line;
+                                        color: #adb5bd;
+                                        font-style: italic;
+                                        pointer-events: none;
+                                        height: 0;
+                                        float: left;
+                                    }
+                                `}</style>
                                 <EditorContent editor={editor} />
+
+                                {/* Word count */}
+                                <div className="border-t border-gray-100 bg-gray-50/50 px-4 py-2 flex items-center justify-between text-xs text-gray-400">
+                                    <span>
+                                        {(() => {
+                                            const words = editor?.getText().split(/\s+/).filter(w => w).length || 0;
+                                            if (words >= 300) return <span className="text-emerald-500">✓ {words} palavras (ótimo para SEO)</span>;
+                                            if (words > 0) return <span className="text-amber-500">⚠ {words} palavras (ideal: +300)</span>;
+                                            return <span>0 palavras</span>;
+                                        })()}
+                                    </span>
+                                    <span>Tip: Selecione texto + clique H2 = subtítulo SEO</span>
+                                </div>
                             </div>
                         </div>
                     )}
@@ -820,14 +1029,28 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
 
 // ============ Sub-components ============
 
-function ToolbarButton({ icon, onClick, active, tooltip }: { icon: React.ReactNode; onClick?: () => void; active?: boolean; tooltip?: string }) {
+function ToolbarButtonLabeled({ icon, label, onClick, active, highlight }: {
+    icon: React.ReactNode;
+    label: string;
+    onClick?: () => void;
+    active?: boolean;
+    highlight?: "purple";
+}) {
+    const activeColor = highlight === "purple"
+        ? "bg-purple-100 text-purple-700 border-purple-300"
+        : "bg-pink-100 text-pink-700 border-pink-300";
+
     return (
         <button
             onClick={onClick}
-            title={tooltip}
-            className={`rounded p-1.5 transition-colors ${active ? "bg-pink-100 text-pink-700" : "text-gray-400 hover:bg-gray-100 hover:text-gray-600"}`}
+            type="button"
+            className={`flex items-center gap-1 rounded-md px-2 py-1.5 text-[11px] font-medium transition-all border ${active
+                    ? activeColor
+                    : "border-transparent text-gray-500 hover:bg-gray-50 hover:text-gray-700"
+                }`}
         >
             {icon}
+            <span>{label}</span>
         </button>
     );
 }
