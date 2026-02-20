@@ -1,7 +1,7 @@
 "use client";
 
 import { useAuth } from "@/context/AuthContext";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useEffect } from "react";
 
 export default function AdminLayout({
@@ -11,12 +11,20 @@ export default function AdminLayout({
 }) {
     const { user, loading } = useAuth();
     const router = useRouter();
+    const pathname = usePathname();
+
+    const isLoginPage = pathname === "/admin/login";
 
     useEffect(() => {
-        if (!loading && !user) {
+        if (!loading && !user && !isLoginPage) {
             router.push("/admin/login");
         }
-    }, [user, loading, router]);
+    }, [user, loading, router, isLoginPage]);
+
+    // Always render the login page, even if not authenticated
+    if (isLoginPage) {
+        return <>{children}</>;
+    }
 
     if (loading) {
         return (
