@@ -26,17 +26,22 @@ body {
   font-family: var(--font-sans);
 }
 
-/* Links inside article content — must be clearly clickable */
-.prose a {
-  color: #db2777;
-  text-decoration: underline;
-  text-decoration-color: #f9a8d4;
+/* Links inside article content — force pink over Typography defaults */
+.prose a,
+.prose a:visited,
+article .prose a,
+article a {
+  color: #db2777 !important;
+  text-decoration: underline !important;
+  text-decoration-color: #f9a8d4 !important;
   text-underline-offset: 3px;
   font-weight: 600;
   transition: color 0.2s, text-decoration-color 0.2s;
 }
 
-.prose a:hover {
-  color: #be185d;
-  text-decoration-color: #be185d;
+.prose a:hover,
+article .prose a:hover,
+article a:hover {
+  color: #be185d !important;
+  text-decoration-color: #be185d !important;
 }
