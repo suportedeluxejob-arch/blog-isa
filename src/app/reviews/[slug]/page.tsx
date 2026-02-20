@@ -7,7 +7,7 @@ import { ProsConsList } from "@/components/mdx/pros-cons-list";
 import { ProductReviewBox } from "@/components/mdx/product-review-box";
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronLeft, Star, ExternalLink } from "lucide-react";
+import { ChevronLeft, Star, ExternalLink, CheckCircle2, XCircle, HelpCircle, ChevronDown } from "lucide-react";
 import PublicLayout from "@/components/layout/PublicLayout";
 
 // Register MDX components
@@ -46,7 +46,6 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps) {
     const { slug } = await params;
 
-    // Try Firestore first
     const firestorePost = await getFirestorePostBySlug(slug);
     if (firestorePost) {
         const effectiveTitle = firestorePost.seoTitle || firestorePost.title;
@@ -76,7 +75,6 @@ export async function generateMetadata({ params }: PageProps) {
         };
     }
 
-    // Fallback to MDX
     const mdxReview = await getMdxReviewBySlug(slug);
     if (mdxReview) {
         return {
@@ -159,24 +157,15 @@ export default async function ReviewPage({ params }: PageProps) {
                                     "@context": "https://schema.org",
                                     "@type": "Product",
                                     "name": frontmatter.productName,
-                                    "image": frontmatter.featuredImage ? [`https://achadosvipdaisa.com.br${frontmatter.featuredImage}`] : [],
+                                    "image": frontmatter.featuredImage
+                                        ? [`https://achadosvipdaisa.com.br${frontmatter.featuredImage}`]
+                                        : [],
                                     "description": frontmatter.excerpt,
-                                    "brand": {
-                                        "@type": "Brand",
-                                        "name": "Shopee/Generic"
-                                    },
-                                    "offers": {
-                                        "@type": "Offer",
-                                        "url": frontmatter.affiliateLink,
-                                        "priceCurrency": "BRL",
-                                        "price": frontmatter.productPrice,
-                                        "availability": "https://schema.org/InStock"
-                                    },
                                     "review": {
                                         "@type": "Review",
                                         "reviewRating": {
                                             "@type": "Rating",
-                                            "ratingValue": frontmatter.rating,
+                                            "ratingValue": frontmatter.rating || 4.5,
                                             "bestRating": "5"
                                         },
                                         "author": {
@@ -189,7 +178,9 @@ export default async function ReviewPage({ params }: PageProps) {
                                     "@context": "https://schema.org",
                                     "@type": "BlogPosting",
                                     "headline": frontmatter.title,
-                                    "image": frontmatter.featuredImage ? [`https://achadosvipdaisa.com.br${frontmatter.featuredImage}`] : [],
+                                    "image": frontmatter.featuredImage
+                                        ? [`https://achadosvipdaisa.com.br${frontmatter.featuredImage}`]
+                                        : [],
                                     "author": {
                                         "@type": "Person",
                                         "name": frontmatter.author
@@ -214,27 +205,45 @@ export default async function ReviewPage({ params }: PageProps) {
     );
 }
 
-// ========================
-// FIRESTORE ARTICLE - Same quality as MDX
-// ========================
+// ======================================================
+// FIRESTORE ARTICLE — Beautiful Structured Rendering
+// ======================================================
 function FirestoreArticle({ post }: { post: BlogPost }) {
     const isSalesArticle = post.articleType === "sales";
-    const publishDate = post.publishedAt?.toDate().toLocaleDateString("pt-BR") ||
-        post.createdAt?.toDate().toLocaleDateString("pt-BR");
-    const updateDate = post.updatedAt?.toDate().toLocaleDateString("pt-BR");
+    const publishDate = post.publishedAt?.toDate?.()?.toISOString?.() ||
+        post.createdAt?.toDate?.()?.toISOString?.() || new Date().toISOString();
+    const updateDate = post.updatedAt?.toDate?.()?.toISOString?.() || publishDate;
+    const displayDate = post.updatedAt?.toDate?.()?.toLocaleDateString("pt-BR") ||
+        post.createdAt?.toDate?.()?.toLocaleDateString("pt-BR") || "";
+
+    const pros = post.pros || [];
+    const cons = post.cons || [];
+    const faqItems = post.faqItems || [];
+    const contentImages = post.contentImages || [];
+    const ratingCriteria = post.ratingCriteria || [];
+    const averageRating = ratingCriteria.length > 0
+        ? (ratingCriteria.reduce((sum, r) => sum + r.score, 0) / ratingCriteria.length).toFixed(1)
+        : null;
 
     return (
-        <article className="min-h-screen bg-white pb-20">
-            {/* Header - Same style as MDX articles */}
-            <header className="bg-brand-50 pt-20 pb-16 px-6 text-center">
+        <article className="min-h-screen bg-gray-50">
+            {/* ======== HERO HEADER ======== */}
+            <header className="relative bg-gradient-to-b from-pink-50 via-white to-gray-50 pt-20 pb-16 px-6 text-center">
                 <div className="max-w-3xl mx-auto">
-                    <Link href="/" className="inline-flex items-center text-pink-700 font-medium mb-8 hover:underline">
+                    <Link href="/" className="inline-flex items-center text-pink-700 font-medium mb-8 hover:underline text-sm">
                         <ChevronLeft size={16} className="mr-1" /> Voltar para Home
                     </Link>
 
                     {post.category && (
-                        <div className="inline-block bg-pink-100 text-pink-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider mb-4">
-                            {post.category}
+                        <div className="flex items-center justify-center gap-2 mb-5">
+                            <span className="bg-pink-100 text-pink-800 text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider">
+                                {post.category}
+                            </span>
+                            {isSalesArticle && (
+                                <span className="bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider">
+                                    ⭐ Review
+                                </span>
+                            )}
                         </div>
                     )}
 
@@ -242,18 +251,29 @@ function FirestoreArticle({ post }: { post: BlogPost }) {
                         {post.title}
                     </h1>
 
-                    <div className="flex items-center justify-center gap-2 text-gray-500 text-sm">
-                        <span>Por <strong className="text-gray-900">{post.author || "Isabelle"}</strong></span>
-                        <span>•</span>
-                        <span>Atualizado em {updateDate}</span>
+                    {post.excerpt && (
+                        <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-6 leading-relaxed">
+                            {post.excerpt}
+                        </p>
+                    )}
+
+                    <div className="flex items-center justify-center gap-3 text-gray-500 text-sm">
+                        <div className="flex items-center gap-1.5">
+                            <div className="w-8 h-8 rounded-full bg-pink-200 flex items-center justify-center text-xs font-bold text-pink-700">
+                                {(post.author || "I")[0]}
+                            </div>
+                            <span>Por <strong className="text-gray-900">{post.author || "Isabelle"}</strong></span>
+                        </div>
+                        <span className="text-gray-300">•</span>
+                        <span>Atualizado em {displayDate}</span>
                     </div>
                 </div>
             </header>
 
-            {/* Cover Image */}
+            {/* ======== COVER IMAGE ======== */}
             {post.coverImage && (
-                <div className="max-w-4xl mx-auto px-6 -mt-8">
-                    <div className="overflow-hidden rounded-2xl shadow-lg">
+                <div className="max-w-4xl mx-auto px-6 -mt-4 mb-12">
+                    <div className="overflow-hidden rounded-2xl shadow-xl">
                         <img
                             src={post.coverImage}
                             alt={post.title}
@@ -263,37 +283,177 @@ function FirestoreArticle({ post }: { post: BlogPost }) {
                 </div>
             )}
 
-            {/* Content */}
-            <div className="max-w-3xl mx-auto px-6 py-12">
-                {/* Affiliate Disclaimer for Sales Articles */}
+            {/* ======== MAIN CONTENT AREA ======== */}
+            <div className="max-w-3xl mx-auto px-6 pb-20">
+
+                {/* Affiliate Disclaimer */}
                 {isSalesArticle && (
-                    <p className="text-gray-500 italic text-sm mb-8">
-                        *Aviso: Este artigo contém links de parceiros. Isso significa que podemos ganhar uma comissão se você comprar,
-                        sem custo extra para você. Isso nos ajuda a manter o blog e continuar trazendo reviews honestos!*
-                    </p>
+                    <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-xl p-4 mb-10 text-sm text-amber-800">
+                        <span className="text-lg mt-0.5">⚠️</span>
+                        <p>
+                            <strong>Aviso:</strong> Este artigo contém links de parceiros. Se você comprar através deles,
+                            podemos ganhar uma comissão, sem custo extra para você.
+                        </p>
+                    </div>
                 )}
 
-                {/* HTML Content from editor - styled same as MDX */}
-                <div
-                    className="prose prose-lg prose-pink mx-auto prose-headings:text-gray-900 prose-p:text-gray-700 prose-p:leading-relaxed prose-strong:text-gray-900 prose-ul:text-gray-700 prose-li:pl-2"
-                    dangerouslySetInnerHTML={{ __html: post.content }}
-                />
+                {/* ======== ARTICLE BODY ======== */}
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 md:p-12 mb-10">
+                    <div
+                        className="prose prose-lg prose-pink max-w-none
+                            prose-headings:text-gray-900 prose-headings:font-bold
+                            prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-5 prose-h2:pb-2 prose-h2:border-b prose-h2:border-gray-100
+                            prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-4
+                            prose-p:text-gray-700 prose-p:leading-relaxed prose-p:mb-5
+                            prose-strong:text-gray-900
+                            prose-ul:text-gray-700 prose-ul:space-y-2
+                            prose-ol:text-gray-700 prose-ol:space-y-2
+                            prose-li:pl-1
+                            prose-blockquote:border-l-pink-400 prose-blockquote:bg-pink-50/50 prose-blockquote:rounded-r-lg prose-blockquote:py-1 prose-blockquote:px-4
+                            prose-img:rounded-xl prose-img:shadow-md
+                            prose-a:text-pink-600 prose-a:font-medium prose-a:no-underline hover:prose-a:underline"
+                        dangerouslySetInnerHTML={{ __html: post.content }}
+                    />
+                </div>
 
-                {/* Product Review Box - Same component as MDX articles use */}
-                {isSalesArticle && post.productName && (
-                    <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 my-10 shadow-sm relative overflow-hidden">
-                        <div className="absolute top-0 right-0 bg-pink-600 text-white text-xs font-bold px-3 py-1 rounded-bl-xl">
-                            REVIEW OFICIAL
+                {/* ======== PROS & CONS BLOCK ======== */}
+                {(pros.length > 0 || cons.length > 0) && (
+                    <div className="grid md:grid-cols-2 gap-4 mb-10">
+                        {/* PROS */}
+                        {pros.length > 0 && (
+                            <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6">
+                                <h3 className="flex items-center gap-2 text-lg font-bold text-emerald-800 mb-4">
+                                    <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+                                    Pontos Fortes
+                                </h3>
+                                <ul className="space-y-3">
+                                    {pros.map((pro, i) => (
+                                        <li key={i} className="flex items-start gap-2.5 text-emerald-900">
+                                            <span className="mt-1 flex-shrink-0 w-5 h-5 bg-emerald-200 text-emerald-700 rounded-full flex items-center justify-center text-xs font-bold">✓</span>
+                                            <span className="text-sm leading-relaxed">{pro}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
+
+                        {/* CONS */}
+                        {cons.length > 0 && (
+                            <div className="bg-red-50 border border-red-200 rounded-2xl p-6">
+                                <h3 className="flex items-center gap-2 text-lg font-bold text-red-800 mb-4">
+                                    <XCircle className="w-5 h-5 text-red-500" />
+                                    Pontos Fracos
+                                </h3>
+                                <ul className="space-y-3">
+                                    {cons.map((con, i) => (
+                                        <li key={i} className="flex items-start gap-2.5 text-red-900">
+                                            <span className="mt-1 flex-shrink-0 w-5 h-5 bg-red-200 text-red-700 rounded-full flex items-center justify-center text-xs font-bold">✗</span>
+                                            <span className="text-sm leading-relaxed">{con}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {/* ======== RATING CRITERIA BLOCK ======== */}
+                {ratingCriteria.length > 0 && (
+                    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 mb-10">
+                        <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                            📊 Avaliação Detalhada
+                        </h3>
+                        <div className="space-y-4">
+                            {ratingCriteria.map((criteria, i) => (
+                                <div key={i} className="flex items-center gap-4">
+                                    <span className="text-sm font-medium text-gray-700 w-40 flex-shrink-0">{criteria.label}</span>
+                                    <div className="flex-1 bg-gray-100 rounded-full h-3 overflow-hidden">
+                                        <div
+                                            className="h-full rounded-full bg-gradient-to-r from-pink-400 to-pink-600 transition-all duration-700"
+                                            style={{ width: `${(criteria.score / 5) * 100}%` }}
+                                        />
+                                    </div>
+                                    <div className="flex items-center gap-0.5 flex-shrink-0">
+                                        {[1, 2, 3, 4, 5].map((star) => (
+                                            <Star
+                                                key={star}
+                                                className={`w-4 h-4 ${star <= criteria.score ? "fill-amber-400 text-amber-400" : "text-gray-200"}`}
+                                            />
+                                        ))}
+                                    </div>
+                                </div>
+                            ))}
+
+                            {averageRating && (
+                                <div className="mt-6 pt-4 border-t border-gray-100 flex items-center justify-between">
+                                    <span className="text-sm font-bold text-gray-700">Nota Final</span>
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-3xl font-extrabold text-pink-600">{averageRating}</span>
+                                        <span className="text-gray-400 text-sm">/5.0</span>
+                                    </div>
+                                </div>
+                            )}
                         </div>
-                        <div className="flex flex-col md:flex-row gap-6 items-center">
+                    </div>
+                )}
+
+                {/* ======== CONTENT IMAGES GALLERY ======== */}
+                {contentImages.length > 0 && (
+                    <div className="mb-10">
+                        <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                            📸 Fotos do Teste
+                        </h3>
+                        <div className={`grid gap-4 ${contentImages.length === 1 ? "grid-cols-1" : "grid-cols-1 md:grid-cols-2"}`}>
+                            {contentImages.map((img, i) => (
+                                <figure key={i} className="overflow-hidden rounded-2xl border border-gray-100 shadow-sm bg-white">
+                                    <div className="overflow-hidden">
+                                        <img
+                                            src={img.url}
+                                            alt={img.caption || `Imagem ${i + 1}`}
+                                            className="w-full h-auto object-cover hover:scale-105 transition-transform duration-500"
+                                        />
+                                    </div>
+                                    {img.caption && (
+                                        <figcaption className="px-4 py-3 text-sm text-gray-600 text-center italic bg-gray-50">
+                                            {img.caption}
+                                        </figcaption>
+                                    )}
+                                </figure>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {/* ======== VERDICT BLOCK ======== */}
+                {post.verdict && (
+                    <div className="bg-gradient-to-br from-pink-50 to-purple-50 border border-pink-200 rounded-2xl p-8 mb-10 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 opacity-10 text-8xl font-black text-pink-300 -mr-2 -mt-4">&ldquo;</div>
+                        <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
+                            🏆 Veredito Final
+                        </h3>
+                        <p className="text-gray-700 leading-relaxed text-lg italic relative z-10">
+                            &ldquo;{post.verdict}&rdquo;
+                        </p>
+                    </div>
+                )}
+
+                {/* ======== PRODUCT REVIEW BOX ======== */}
+                {isSalesArticle && post.productName && (
+                    <div className="bg-white border-2 border-pink-200 rounded-2xl p-8 mb-10 shadow-lg relative overflow-hidden">
+                        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-pink-400 via-pink-600 to-purple-500" />
+                        <div className="absolute top-3 right-4 bg-pink-600 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                            Review Oficial
+                        </div>
+
+                        <div className="flex flex-col md:flex-row gap-6 items-center mt-4">
                             {post.coverImage && (
-                                <div className="w-32 h-32 flex-shrink-0 bg-white rounded-xl p-2 border border-slate-100 flex items-center justify-center">
+                                <div className="w-36 h-36 flex-shrink-0 bg-gray-50 rounded-2xl p-3 border border-gray-100 flex items-center justify-center">
                                     <img src={post.coverImage} alt={post.productName} className="max-w-full max-h-full object-contain" />
                                 </div>
                             )}
 
                             <div className="flex-1 text-center md:text-left">
-                                <h3 className="text-2xl font-bold text-slate-900 mb-2">{post.productName}</h3>
+                                <h3 className="text-2xl font-extrabold text-gray-900 mb-3">{post.productName}</h3>
 
                                 {/* Star Rating */}
                                 {post.productRating && post.productRating > 0 && (
@@ -301,19 +461,19 @@ function FirestoreArticle({ post }: { post: BlogPost }) {
                                         {[1, 2, 3, 4, 5].map((star) => (
                                             <Star
                                                 key={star}
-                                                className={`w-6 h-6 ${star <= (post.productRating || 0) ? "fill-yellow-400 text-yellow-400" : "text-slate-300"}`}
+                                                className={`w-6 h-6 ${star <= (post.productRating || 0) ? "fill-amber-400 text-amber-400" : "text-gray-200"}`}
                                             />
                                         ))}
-                                        <span className="ml-2 font-bold text-slate-700">{post.productRating}/5.0</span>
+                                        <span className="ml-2 font-bold text-lg text-gray-800">{post.productRating}/5</span>
                                     </div>
                                 )}
 
                                 {/* Price */}
                                 {post.productPrice && (
-                                    <p className="text-lg font-bold text-pink-600 mb-3">R$ {post.productPrice}</p>
+                                    <p className="text-2xl font-extrabold text-pink-600 mb-4">
+                                        R$ {post.productPrice}
+                                    </p>
                                 )}
-
-                                <p className="text-slate-600 italic mb-4">{post.excerpt}</p>
 
                                 {/* Affiliate Button */}
                                 {post.affiliateLink && (
@@ -321,19 +481,57 @@ function FirestoreArticle({ post }: { post: BlogPost }) {
                                         href={post.affiliateLink}
                                         target="_blank"
                                         rel="nofollow sponsored noopener noreferrer"
-                                        className="inline-flex items-center gap-2 px-6 py-3 bg-pink-600 text-white font-bold rounded-lg hover:bg-pink-700 transition-colors no-underline"
+                                        className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-pink-600 to-pink-700 text-white font-bold rounded-xl hover:from-pink-700 hover:to-pink-800 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-lg no-underline"
                                     >
                                         Ver Melhor Preço
-                                        <ExternalLink size={16} />
+                                        <ExternalLink size={18} />
                                     </a>
                                 )}
                             </div>
                         </div>
                     </div>
                 )}
+
+                {/* ======== FAQ BLOCK ======== */}
+                {faqItems.length > 0 && (
+                    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm mb-10 overflow-hidden">
+                        <div className="bg-purple-50 border-b border-purple-100 px-8 py-5">
+                            <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                                <HelpCircle className="w-5 h-5 text-purple-500" />
+                                Perguntas Frequentes
+                            </h3>
+                            <p className="text-sm text-gray-500 mt-1">Respostas rápidas às dúvidas mais comuns</p>
+                        </div>
+                        <div className="divide-y divide-gray-100">
+                            {faqItems.map((faq, i) => (
+                                <div key={i} className="px-8 py-6 hover:bg-gray-50/50 transition-colors">
+                                    <h4 className="font-bold text-gray-900 mb-2 flex items-start gap-3">
+                                        <span className="flex-shrink-0 w-7 h-7 bg-purple-100 text-purple-700 rounded-full flex items-center justify-center text-sm font-bold mt-0.5">
+                                            {i + 1}
+                                        </span>
+                                        {faq.question}
+                                    </h4>
+                                    <p className="text-gray-700 leading-relaxed pl-10">
+                                        {faq.answer}
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {/* ======== FOOTER DISCLAIMER ======== */}
+                {isSalesArticle && (
+                    <div className="text-center text-xs text-gray-400 border-t border-gray-200 pt-8">
+                        <p>
+                            Este artigo contém links de afiliados. Ao comprar através deles, você apoia nosso trabalho sem custo adicional.
+                            Todas as opiniões são honestas e baseadas em testes reais.
+                        </p>
+                    </div>
+                )}
             </div>
 
-            {/* JSON-LD Schema - Same structure as MDX articles */}
+            {/* ======== JSON-LD SCHEMA ======== */}
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{
@@ -345,10 +543,7 @@ function FirestoreArticle({ post }: { post: BlogPost }) {
                                 "name": post.productName,
                                 "image": post.coverImage ? [post.coverImage] : [],
                                 "description": post.seoDescription || post.excerpt,
-                                "brand": {
-                                    "@type": "Brand",
-                                    "name": "Shopee/Generic"
-                                },
+                                "brand": { "@type": "Brand", "name": "Genérico" },
                                 "offers": {
                                     "@type": "Offer",
                                     "url": post.affiliateLink || `https://achadosvipdaisa.com.br/reviews/${post.slug}`,
@@ -363,10 +558,7 @@ function FirestoreArticle({ post }: { post: BlogPost }) {
                                         "ratingValue": post.productRating || 0,
                                         "bestRating": "5"
                                     },
-                                    "author": {
-                                        "@type": "Person",
-                                        "name": post.author || "Isabelle"
-                                    }
+                                    "author": { "@type": "Person", "name": post.author || "Isabelle" }
                                 }
                             }
                             : {
@@ -374,17 +566,11 @@ function FirestoreArticle({ post }: { post: BlogPost }) {
                                 "@type": "BlogPosting",
                                 "headline": post.seoTitle || post.title,
                                 "image": post.coverImage ? [post.coverImage] : [],
-                                "author": {
-                                    "@type": "Person",
-                                    "name": post.author || "Isabelle"
-                                },
+                                "author": { "@type": "Person", "name": post.author || "Isabelle" },
                                 "publisher": {
                                     "@type": "Organization",
                                     "name": "Achados Vip da Isa",
-                                    "logo": {
-                                        "@type": "ImageObject",
-                                        "url": "https://achadosvipdaisa.com.br/logo.png"
-                                    }
+                                    "logo": { "@type": "ImageObject", "url": "https://achadosvipdaisa.com.br/logo.png" }
                                 },
                                 "datePublished": publishDate,
                                 "dateModified": updateDate,
@@ -394,6 +580,27 @@ function FirestoreArticle({ post }: { post: BlogPost }) {
                     )
                 }}
             />
+
+            {/* ======== FAQ SCHEMA (separate for rich results) ======== */}
+            {faqItems.length > 0 && (
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{
+                        __html: JSON.stringify({
+                            "@context": "https://schema.org",
+                            "@type": "FAQPage",
+                            "mainEntity": faqItems.map(faq => ({
+                                "@type": "Question",
+                                "name": faq.question,
+                                "acceptedAnswer": {
+                                    "@type": "Answer",
+                                    "text": faq.answer
+                                }
+                            }))
+                        })
+                    }}
+                />
+            )}
         </article>
     );
 }

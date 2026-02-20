@@ -13,6 +13,21 @@ import {
     Timestamp,
 } from "firebase/firestore";
 
+export interface FaqItem {
+    question: string;
+    answer: string;
+}
+
+export interface ContentImage {
+    url: string;
+    caption: string;
+}
+
+export interface RatingCriteria {
+    label: string;
+    score: number; // 1-5
+}
+
 export interface BlogPost {
     id?: string;
     title: string;
@@ -21,7 +36,7 @@ export interface BlogPost {
     excerpt: string;
     coverImage: string;
     category: string;
-    articleType: "educational" | "sales"; // Educational = SEO ranking, Sales = affiliate reviews
+    articleType: "educational" | "sales";
     status: "draft" | "published";
     author: string;
     // SEO Fields
@@ -40,6 +55,13 @@ export interface BlogPost {
     productPrice?: string;
     productRating?: number;
     affiliateLink?: string;
+    // Structured Content Blocks
+    pros?: string[];
+    cons?: string[];
+    faqItems?: FaqItem[];
+    contentImages?: ContentImage[];
+    ratingCriteria?: RatingCriteria[];
+    verdict?: string;
     // Timestamps
     createdAt: Timestamp;
     updatedAt: Timestamp;
