@@ -26,8 +26,17 @@ body {
   font-family: var(--font-sans);
 }
 
-@layer utilities {
-  .prose a:not(.btn-primary) {
-    @apply text-pink-600 no-underline hover:text-pink-800;
-  }
+/* Links inside article content — must be clearly clickable */
+.prose a {
+  color: #db2777;
+  text-decoration: underline;
+  text-decoration-color: #f9a8d4;
+  text-underline-offset: 3px;
+  font-weight: 600;
+  transition: color 0.2s, text-decoration-color 0.2s;
+}
+
+.prose a:hover {
+  color: #be185d;
+  text-decoration-color: #be185d;
 }
