@@ -272,7 +272,7 @@ function FirestoreArticle({ post }: { post: BlogPost }) {
 
             {/* ======== COVER IMAGE ======== */}
             {post.coverImage && (
-                <div className="max-w-4xl mx-auto px-6 -mt-4 mb-12">
+                <div className="max-w-4xl mx-auto px-6 mt-8 mb-12">
                     <div style={{ borderRadius: '1rem', overflow: 'hidden', boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)' }}>
                         <img
                             src={post.coverImage}
