@@ -5,13 +5,15 @@ import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import ImageExtension from "@tiptap/extension-image";
 import LinkExtension from "@tiptap/extension-link";
+import { Color } from "@tiptap/extension-color";
+import { TextStyle } from "@tiptap/extension-text-style";
 import { BlogPost, getCategories, Category, FaqItem, ContentImage, RatingCriteria } from "@/services/postService";
 import {
     Loader2, Save, ArrowLeft,
     Bold, Italic, List, ListOrdered, Quote, Heading2, Heading3, Link2, ImagePlus,
     Globe, Search, Target, AlertCircle, CheckCircle2, Info, LinkIcon,
     Plus, Trash2, Star, GripVertical, HelpCircle, ImageIcon, ThumbsUp, ThumbsDown,
-    ChevronDown, ChevronUp, MessageSquare, Award, Minus, Type, Pilcrow, Undo, Redo
+    ChevronDown, ChevronUp, MessageSquare, Award, Minus, Type, Pilcrow, Undo, Redo, Palette
 } from "lucide-react";
 import Link from "next/link";
 
@@ -73,6 +75,8 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
             }),
             ImageExtension,
             LinkExtension.configure({ openOnClick: false }),
+            TextStyle,
+            Color,
         ],
         content: initialPost?.content || "",
         editorProps: {
@@ -442,7 +446,7 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
                                                 label="Link"
                                                 onClick={() => {
                                                     const url = prompt("URL do link:");
-                                                    if (url) editor?.chain().focus().setLink({ href: url }).run();
+                                                    if (url) editor?.chain().focus().setLink({ href: url }).setColor('#db2777').run();
                                                 }}
                                                 active={editor?.isActive("link")}
                                             />
@@ -451,6 +455,37 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
                                                 label="Imagem"
                                                 onClick={handleEditorImageInsert}
                                             />
+                                        </div>
+
+                                        <div className="mx-1 h-6 w-px bg-gray-200" />
+
+                                        {/* Color Group */}
+                                        <div className="flex items-center gap-0.5 bg-white rounded-lg border border-gray-200 px-1 py-0.5">
+                                            {[
+                                                { color: '#db2777', label: 'Rosa', tip: 'Links' },
+                                                { color: '#dc2626', label: 'Vermelho', tip: 'Destaque' },
+                                                { color: '#2563eb', label: 'Azul', tip: 'Info' },
+                                                { color: '#16a34a', label: 'Verde', tip: 'Positivo' },
+                                                { color: '#000000', label: 'Preto', tip: 'Normal' },
+                                            ].map((c) => (
+                                                <button
+                                                    key={c.color}
+                                                    onClick={() => c.color === '#000000'
+                                                        ? editor?.chain().focus().unsetColor().run()
+                                                        : editor?.chain().focus().setColor(c.color).run()
+                                                    }
+                                                    title={`${c.label} — ${c.tip}`}
+                                                    className={`rounded p-1 transition-colors ${editor?.getAttributes('textStyle').color === c.color
+                                                        ? 'ring-2 ring-offset-1 ring-pink-400'
+                                                        : 'hover:bg-gray-100'
+                                                        }`}
+                                                >
+                                                    <div
+                                                        className="w-4 h-4 rounded-full border border-gray-300"
+                                                        style={{ backgroundColor: c.color }}
+                                                    />
+                                                </button>
+                                            ))}
                                         </div>
 
                                         <div className="mx-1 h-6 w-px bg-gray-200" />
@@ -1045,8 +1080,8 @@ function ToolbarButtonLabeled({ icon, label, onClick, active, highlight }: {
             onClick={onClick}
             type="button"
             className={`flex items-center gap-1 rounded-md px-2 py-1.5 text-[11px] font-medium transition-all border ${active
-                    ? activeColor
-                    : "border-transparent text-gray-500 hover:bg-gray-50 hover:text-gray-700"
+                ? activeColor
+                : "border-transparent text-gray-500 hover:bg-gray-50 hover:text-gray-700"
                 }`}
         >
             {icon}
