@@ -7,7 +7,7 @@ import { ProsConsList } from "@/components/mdx/pros-cons-list";
 import { ProductReviewBox } from "@/components/mdx/product-review-box";
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronLeft, Star, ExternalLink, CheckCircle2, XCircle, HelpCircle, ChevronDown } from "lucide-react";
+import { ChevronLeft, Star, ExternalLink, CheckCircle2, XCircle, HelpCircle, ChevronDown, BarChart2, Camera, ShieldCheck, Award } from "lucide-react";
 import PublicLayout from "@/components/layout/PublicLayout";
 
 // Register MDX components
@@ -375,7 +375,8 @@ function FirestoreArticle({ post }: { post: BlogPost }) {
                 {ratingCriteria.length > 0 && (
                     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 mb-10">
                         <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                            📊 Avaliação Detalhada
+                            <BarChart2 className="w-5 h-5 text-pink-500" />
+                            Avaliação Detalhada
                         </h3>
                         <div className="space-y-4">
                             {ratingCriteria.map((criteria, i) => (
@@ -415,7 +416,8 @@ function FirestoreArticle({ post }: { post: BlogPost }) {
                 {contentImages.length > 0 && (
                     <div className="mb-10">
                         <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                            📸 Fotos do Teste
+                            <Camera className="w-5 h-5 text-pink-500" />
+                            Fotos do Teste
                         </h3>
                         <div className={`grid gap-4 ${contentImages.length === 1 ? "grid-cols-1" : "grid-cols-1 md:grid-cols-2"}`}>
                             {contentImages.map((img, i) => (
@@ -443,7 +445,8 @@ function FirestoreArticle({ post }: { post: BlogPost }) {
                     <div className="bg-gradient-to-br from-pink-50 to-purple-50 border border-pink-200 rounded-2xl p-8 mb-10 relative overflow-hidden">
                         <div className="absolute top-0 right-0 opacity-10 text-8xl font-black text-pink-300 -mr-2 -mt-4">&ldquo;</div>
                         <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
-                            🏆 Veredito Final
+                            <Award className="w-5 h-5 text-pink-500" />
+                            Veredito Final
                         </h3>
                         <p className="text-gray-700 leading-relaxed text-lg italic relative z-10">
                             &ldquo;{post.verdict}&rdquo;
@@ -460,11 +463,10 @@ function FirestoreArticle({ post }: { post: BlogPost }) {
                         </div>
 
                         <div className="flex flex-col md:flex-row gap-6 items-center mt-4">
-                            {post.coverImage && (
-                                <div className="w-36 h-36 flex-shrink-0 bg-gray-50 rounded-2xl p-3 border border-gray-100 flex items-center justify-center">
-                                    <img src={post.coverImage} alt={post.productName} className="max-w-full max-h-full object-contain" />
-                                </div>
-                            )}
+                            {/* Professional icon instead of cover photo */}
+                            <div className="w-28 h-28 flex-shrink-0 bg-gradient-to-br from-pink-50 to-purple-50 rounded-2xl border border-pink-100 flex items-center justify-center">
+                                <ShieldCheck className="w-14 h-14 text-pink-400" />
+                            </div>
 
                             <div className="flex-1 text-center md:text-left">
                                 <h3 className="text-2xl font-extrabold text-gray-900 mb-3">{post.productName}</h3>
@@ -482,8 +484,8 @@ function FirestoreArticle({ post }: { post: BlogPost }) {
                                     </div>
                                 )}
 
-                                {/* Price */}
-                                {post.productPrice && (
+                                {/* Price — only show if > 0 */}
+                                {post.productPrice && Number(post.productPrice) > 0 && (
                                     <p className="text-2xl font-extrabold text-pink-600 mb-4">
                                         R$ {post.productPrice}
                                     </p>
@@ -497,7 +499,7 @@ function FirestoreArticle({ post }: { post: BlogPost }) {
                                         rel="nofollow sponsored noopener noreferrer"
                                         className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-pink-600 to-pink-700 text-white font-bold rounded-xl hover:from-pink-700 hover:to-pink-800 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-lg no-underline"
                                     >
-                                        Ver Melhor Preço
+                                        Solicitar Orçamento Gratuito
                                         <ExternalLink size={18} />
                                     </a>
                                 )}
