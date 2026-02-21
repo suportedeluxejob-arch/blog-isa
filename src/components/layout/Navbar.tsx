@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getCategories } from "@/services/postService";
 import { getAllReviews } from "@/lib/mdx";
+import { MobileMenu } from "./MobileMenu";
 
 export async function Navbar() {
     // Get categories from Firestore
@@ -51,9 +52,9 @@ export async function Navbar() {
 
     return (
         <nav className="bg-white border-b border-gray-100 sticky top-0 z-50 shadow-sm">
-            <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
                 {/* Logo */}
-                <Link href="/" className="text-xl font-bold text-gray-900 group">
+                <Link href="/" className="text-xl font-bold text-gray-900 group flex-shrink-0">
                     Achados Vip da <span className="text-pink-600 group-hover:text-pink-700 transition-colors">Isa</span>
                 </Link>
 
@@ -70,10 +71,8 @@ export async function Navbar() {
                     ))}
                 </div>
 
-                {/* Mobile Menu Placeholder */}
-                <div className="md:hidden text-gray-400 text-sm">
-                    Menu
-                </div>
+                {/* Mobile Hamburger Menu (Client Component) */}
+                <MobileMenu links={allLinks} />
             </div>
         </nav>
     );
