@@ -299,8 +299,23 @@ function FirestoreArticle({ post }: { post: BlogPost }) {
 
                 {/* ======== ARTICLE BODY ======== */}
                 <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 md:p-12 mb-10">
+                    <style dangerouslySetInnerHTML={{
+                        __html: `
+                        .article-content a {
+                            color: #db2777 !important;
+                            text-decoration: underline !important;
+                            text-decoration-color: #f9a8d4 !important;
+                            text-underline-offset: 3px !important;
+                            font-weight: 600 !important;
+                            transition: color 0.2s, text-decoration-color 0.2s;
+                        }
+                        .article-content a:hover {
+                            color: #be185d !important;
+                            text-decoration-color: #be185d !important;
+                        }
+                    `}} />
                     <div
-                        className="prose prose-lg prose-pink max-w-none
+                        className="article-content prose prose-lg prose-pink max-w-none
                             prose-headings:text-gray-900 prose-headings:font-bold
                             prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-5 prose-h2:pb-2 prose-h2:border-b prose-h2:border-gray-100
                             prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-4
@@ -310,8 +325,7 @@ function FirestoreArticle({ post }: { post: BlogPost }) {
                             prose-ol:text-gray-700 prose-ol:space-y-2
                             prose-li:pl-1
                             prose-blockquote:border-l-pink-400 prose-blockquote:bg-pink-50/50 prose-blockquote:rounded-r-lg prose-blockquote:py-1 prose-blockquote:px-4
-                            prose-img:rounded-xl prose-img:shadow-md
-                            prose-a:text-pink-600 prose-a:font-medium prose-a:no-underline hover:prose-a:underline"
+                            prose-img:rounded-xl prose-img:shadow-md"
                         dangerouslySetInnerHTML={{ __html: post.content }}
                     />
                 </div>
