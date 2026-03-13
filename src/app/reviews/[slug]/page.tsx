@@ -361,52 +361,37 @@ function FirestoreArticle({ post }: { post: BlogPost }) {
 
                                     <div className="flex flex-wrap items-center gap-6">
                                         {/* Dynamic Star Rating */}
+                                        {/* Stars Only - No Numbers or Price */}
                                         {post.productRating && post.productRating > 0 && (
-                                            <div className="flex flex-col gap-1">
-                                                <div className="flex items-center gap-0.5">
-                                                    {[1, 2, 3, 4, 5].map((star) => (
-                                                        <Star
-                                                            key={star}
-                                                            className={`w-4 h-4 ${star <= (post.productRating || 0) ? "fill-amber-400 text-amber-400" : "text-gray-200"}`}
-                                                            strokeWidth={star <= (post.productRating || 0) ? 0 : 2}
-                                                        />
-                                                    ))}
-                                                    <span className="ml-1.5 font-black text-gray-900 text-sm">{(post.productRating).toFixed(1)}</span>
-                                                </div>
-                                                <span className="text-[10px] text-gray-400 uppercase font-bold tracking-tighter">Nota da Isa</span>
-                                            </div>
-                                        )}
-
-                                        {/* Elegant Price Display */}
-                                        {post.productPrice && Number(post.productPrice) > 0 && (
-                                            <div className="flex flex-col gap-0">
-                                                <div className="flex items-baseline gap-1">
-                                                    <span className="text-xs font-bold text-pink-500">R$</span>
-                                                    <span className="text-2xl font-black text-gray-900 tracking-tight">{post.productPrice}</span>
-                                                </div>
-                                                <span className="text-[10px] text-gray-400 uppercase font-bold tracking-tighter">Melhor Oferta Hoje</span>
+                                            <div className="flex items-center gap-0.5 mb-2">
+                                                {[1, 2, 3, 4, 5].map((star) => (
+                                                    <Star
+                                                        key={star}
+                                                        className={`w-4 h-4 ${star <= (post.productRating || 0) ? "fill-amber-400 text-amber-400" : "text-gray-200"}`}
+                                                        strokeWidth={star <= (post.productRating || 0) ? 0 : 2}
+                                                    />
+                                                ))}
                                             </div>
                                         )}
                                     </div>
 
-                                    {/* Action Button - The Star of the Show */}
-                                    <div className="pt-2">
+                                    {/* Action Button - Clean & Premium */}
+                                    <div className="pt-4 flex flex-col items-center sm:items-start uppercase tracking-widest font-bold">
                                         {post.affiliateLink && (
                                             <a
                                                 href={post.affiliateLink}
                                                 target="_blank"
                                                 rel="nofollow sponsored noopener noreferrer"
-                                                className="group/btn relative inline-flex items-center justify-center gap-3 w-full sm:w-auto px-10 py-4.5 bg-gray-900 hover:bg-gray-800 text-white font-black rounded-2xl transition-all duration-300 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.3)] hover:shadow-[0_15px_40px_-10px_rgba(0,0,0,0.4)] hover:-translate-y-1 no-underline"
+                                                className="group/btn relative inline-flex items-center justify-center gap-2 w-full sm:w-auto px-10 py-4 bg-pink-600 hover:bg-pink-700 text-white font-bold rounded-full transition-all duration-300 shadow-md hover:shadow-pink-200/50 hover:-translate-y-0.5 no-underline !text-white !no-underline"
                                             >
-                                                <span className="relative z-10 flex items-center gap-2">
+                                                <span className="text-base">
                                                     {post.affiliateButtonText || "Ver Oferta na Shopee"}
-                                                    <ExternalLink size={18} className="group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform" />
                                                 </span>
-                                                <div className="absolute inset-0 bg-gradient-to-r from-pink-600 to-purple-600 rounded-2xl opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300" />
+                                                <ExternalLink size={18} className="translate-y-[-1px]" />
                                             </a>
                                         )}
-                                        <p className="mt-4 text-[11px] text-gray-400 text-center sm:text-left flex items-center justify-center sm:justify-start gap-1 justify-center sm:justify-start">
-                                            <ShieldCheck size={12} /> Link seguro e verificado por Isabella
+                                        <p className="mt-4 text-[10px] text-gray-400 font-medium normal-case tracking-normal flex items-center gap-1 opacity-80">
+                                            <ShieldCheck size={12} className="text-green-500" /> Link seguro e verificado por Isabella
                                         </p>
                                     </div>
                                 </div>
