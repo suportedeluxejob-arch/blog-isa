@@ -12,26 +12,16 @@ import { auth } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
 
-interface LegacyPost {
-    slug: string;
-    title: string;
-    excerpt: string;
-    coverImage: string;
-    category: string;
-    date: string;
-    articleType: string;
-    origin: "mdx";
-    isReview?: boolean;
-}
+
 
 export default function AdminDashboard() {
     const [posts, setPosts] = useState<BlogPost[]>([]);
-    const [legacyPosts, setLegacyPosts] = useState<LegacyPost[]>([]);
+
     const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
     const [filterType, setFilterType] = useState<"all" | "educational" | "sales">("all");
-    const [filterStatus, setFilterStatus] = useState<"all" | "draft" | "published" | "legacy">("all");
+    const [filterStatus, setFilterStatus] = useState<"all" | "draft" | "published">("all");
     const [activeTab, setActiveTab] = useState<"posts" | "categories">("posts");
     const router = useRouter();
 
@@ -42,14 +32,12 @@ export default function AdminDashboard() {
     const fetchData = async () => {
         setLoading(true);
         try {
-            const [postsData, catsData, legacyRes] = await Promise.all([
+            const [postsData, catsData] = await Promise.all([
                 getPosts(),
-                getCategories(),
-                fetch("/api/legacy-posts").then(r => r.json()).catch(() => [])
+                getCategories()
             ]);
             setPosts(postsData);
             setCategories(catsData);
-            setLegacyPosts(legacyRes);
         } catch (error) {
             console.error("Error fetching data:", error);
         } finally {
@@ -71,20 +59,7 @@ export default function AdminDashboard() {
 
     // Combined posts for display
     const allDisplayPosts = [
-        ...posts.map(p => ({ ...p, origin: "firestore" as const })),
-        ...legacyPosts.map(p => ({
-            id: `mdx-${p.slug}`,
-            title: p.title,
-            slug: p.slug,
-            content: "",
-            excerpt: p.excerpt,
-            coverImage: p.coverImage,
-            category: p.category,
-            articleType: (p.isReview ? "sales" : "educational") as "educational" | "sales",
-            status: "published" as const,
-            author: "Isabelle",
-            origin: "mdx" as const,
-        })),
+        ...posts.map(p => ({ ...p, origin: "firestore" as const }))
     ];
 
     const filteredPosts = allDisplayPosts.filter((post) => {
@@ -92,19 +67,17 @@ export default function AdminDashboard() {
             post.slug.toLowerCase().includes(searchQuery.toLowerCase());
         const matchesType = filterType === "all" || post.articleType === filterType;
         const matchesStatus = filterStatus === "all" ||
-            (filterStatus === "legacy" && post.origin === "mdx") ||
-            (filterStatus !== "legacy" && post.origin !== "mdx" && (post as BlogPost).status === filterStatus);
+            ((post as BlogPost).status === filterStatus);
         return matchesSearch && matchesType && matchesStatus;
     });
 
     const stats = {
         total: allDisplayPosts.length,
-        published: posts.filter(p => p.status === "published").length + legacyPosts.length,
+        published: posts.filter(p => p.status === "published").length,
         drafts: posts.filter(p => p.status === "draft").length,
         educational: allDisplayPosts.filter(p => p.articleType === "educational").length,
         sales: allDisplayPosts.filter(p => p.articleType === "sales").length,
         categories: categories.length,
-        legacy: legacyPosts.length,
     };
 
     if (loading) {
@@ -130,21 +103,7 @@ export default function AdminDashboard() {
                 <StatsCard icon={<FolderOpen size={20} />} label="Categorias" value={stats.categories} color="indigo" />
             </div>
 
-            {/* Legacy Notice */}
-            {legacyPosts.length > 0 && (
-                <div className="mb-6 flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4">
-                    <Database size={20} className="text-amber-600 flex-shrink-0 mt-0.5" />
-                    <div>
-                        <p className="text-sm font-medium text-amber-800">
-                            {legacyPosts.length} artigo(s) legado(s) encontrado(s)
-                        </p>
-                        <p className="text-xs text-amber-600 mt-0.5">
-                            Esses artigos estão em arquivos MDX locais. Eles aparecem no blog normalmente.
-                            Para editá-los pelo painel, é preciso migrá-los para o Firestore.
-                        </p>
-                    </div>
-                </div>
-            )}
+
 
             {/* Tabs */}
             <div className="mb-6 flex items-center gap-1 rounded-xl bg-gray-100 p-1">
@@ -216,8 +175,8 @@ function PostsTab({
     setSearchQuery: (v: string) => void;
     filterType: "all" | "educational" | "sales";
     setFilterType: (v: "all" | "educational" | "sales") => void;
-    filterStatus: "all" | "draft" | "published" | "legacy";
-    setFilterStatus: (v: "all" | "draft" | "published" | "legacy") => void;
+    filterStatus: "all" | "draft" | "published";
+    setFilterStatus: (v: "all" | "draft" | "published") => void;
     onDelete: (id: string) => void;
 }) {
     return (
@@ -253,7 +212,6 @@ function PostsTab({
                     <option value="all">Todos os Status</option>
                     <option value="published">✅ Publicados</option>
                     <option value="draft">📝 Rascunhos</option>
-                    <option value="legacy">📁 Legado (MDX)</option>
                 </select>
 
                 <Link
@@ -300,18 +258,12 @@ function PostsTab({
                                     <h3 className="font-semibold text-gray-900 truncate">{post.title}</h3>
                                 </div>
                                 <div className="flex flex-wrap items-center gap-2 text-xs">
-                                    {post.origin === "mdx" ? (
-                                        <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-medium bg-gray-100 text-gray-600">
-                                            📁 Legado (MDX)
-                                        </span>
-                                    ) : (
-                                        <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-medium ${post.status === "published"
-                                            ? "bg-emerald-50 text-emerald-700"
-                                            : "bg-amber-50 text-amber-700"
-                                            }`}>
-                                            {post.status === "published" ? "✅ Publicado" : "📝 Rascunho"}
-                                        </span>
-                                    )}
+                                    <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-medium ${post.status === "published"
+                                        ? "bg-emerald-50 text-emerald-700"
+                                        : "bg-amber-50 text-amber-700"
+                                        }`}>
+                                        {post.status === "published" ? "✅ Publicado" : "📝 Rascunho"}
+                                    </span>
                                     <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-medium ${post.articleType === "educational"
                                         ? "bg-purple-50 text-purple-700"
                                         : "bg-pink-50 text-pink-700"
@@ -330,11 +282,9 @@ function PostsTab({
                             </div>
 
                             {/* SEO Score Indicator */}
-                            {post.origin !== "mdx" && (
-                                <div className="hidden md:flex flex-col items-center gap-1">
-                                    <SeoIndicator post={post} />
-                                </div>
-                            )}
+                            <div className="hidden md:flex flex-col items-center gap-1">
+                                <SeoIndicator post={post} />
+                            </div>
 
                             {/* Actions */}
                             <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -346,24 +296,20 @@ function PostsTab({
                                 >
                                     <Eye size={18} />
                                 </Link>
-                                {post.origin !== "mdx" && (
-                                    <>
-                                        <Link
-                                            href={`/admin/posts/${post.id}`}
-                                            className="rounded-lg p-2 text-blue-400 hover:bg-blue-50 hover:text-blue-600"
-                                            title="Editar"
-                                        >
-                                            <Edit size={18} />
-                                        </Link>
-                                        <button
-                                            onClick={() => onDelete(post.id!)}
-                                            className="rounded-lg p-2 text-red-400 hover:bg-red-50 hover:text-red-600"
-                                            title="Deletar"
-                                        >
-                                            <Trash2 size={18} />
-                                        </button>
-                                    </>
-                                )}
+                                <Link
+                                    href={`/admin/posts/${post.id}`}
+                                    className="rounded-lg p-2 text-blue-400 hover:bg-blue-50 hover:text-blue-600"
+                                    title="Editar"
+                                >
+                                    <Edit size={18} />
+                                </Link>
+                                <button
+                                    onClick={() => onDelete(post.id!)}
+                                    className="rounded-lg p-2 text-red-400 hover:bg-red-50 hover:text-red-600"
+                                    title="Deletar"
+                                >
+                                    <Trash2 size={18} />
+                                </button>
                             </div>
                         </div>
                     ))

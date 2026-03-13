@@ -1,4 +1,3 @@
-import { getAllReviews } from "@/lib/mdx";
 import { getPosts as getFirestorePosts, getCategories } from "@/services/postService";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -8,8 +7,6 @@ import PublicLayout from "@/components/layout/PublicLayout";
 export const revalidate = 60;
 
 export async function generateStaticParams() {
-    const reviews = await getAllReviews();
-    const mdxCategories = Array.from(new Set(reviews.map((review) => review.frontmatter.category).filter(Boolean)));
 
     let firestoreCategories: string[] = [];
     try {
@@ -20,7 +17,6 @@ export async function generateStaticParams() {
     }
 
     const allSlugs = new Set([
-        ...mdxCategories.map((cat) => cat.toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, "")),
         ...firestoreCategories,
     ]);
 
@@ -31,12 +27,6 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
     const { slug } = await params;
 
     const slugify = (text: string) => text.toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, "");
-
-    // Get MDX reviews for this category
-    const reviews = await getAllReviews();
-    const categoryReviews = reviews.filter(
-        (review) => slugify(review.frontmatter.category || "") === slug
-    );
 
     // Get Firestore posts for this category
     let firestorePosts: any[] = [];
@@ -58,21 +48,10 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
     } catch { }
 
     if (!categoryName || categoryName === slug) {
-        if (categoryReviews.length > 0) {
-            categoryName = categoryReviews[0].frontmatter.category;
-        }
+        // Fallback removed
     }
 
     // Combine all posts
-    const formattedMdx = categoryReviews.map((post) => ({
-        slug: post.slug,
-        title: post.frontmatter.title,
-        excerpt: post.frontmatter.excerpt,
-        coverImage: post.frontmatter.featuredImage,
-        category: post.frontmatter.category,
-        date: post.frontmatter.date,
-        origin: "mdx",
-    }));
 
     const formattedFirestore = firestorePosts.map((post) => ({
         slug: post.slug,
@@ -84,7 +63,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
         origin: "firestore",
     }));
 
-    const allPosts = [...formattedFirestore, ...formattedMdx];
+    const allPosts = [...formattedFirestore];
 
     if (allPosts.length === 0) {
         return notFound();

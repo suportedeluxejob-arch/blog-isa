@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { getCategories } from "@/services/postService";
-import { getAllReviews } from "@/lib/mdx";
 import { MobileMenu } from "./MobileMenu";
 
 export async function Navbar() {
@@ -16,20 +15,7 @@ export async function Navbar() {
         console.warn("Could not load Firestore categories:", error);
     }
 
-    // Get categories from MDX articles (legacy)
-    let mdxCategories: { label: string; href: string }[] = [];
-    try {
-        const reviews = await getAllReviews();
-        const uniqueCats = Array.from(
-            new Set(reviews.map((r) => r.frontmatter.category).filter(Boolean))
-        );
-        mdxCategories = uniqueCats.map((cat) => ({
-            label: cat,
-            href: `/categories/${cat.toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, "")}`,
-        }));
-    } catch (error) {
-        console.warn("Could not load MDX categories:", error);
-    }
+    // Get categories from MDX articles (legacy) removed
 
     // Merge categories, avoiding duplicates by href
     const seenHrefs = new Set<string>();
@@ -37,13 +23,6 @@ export async function Navbar() {
 
     // Firestore categories take priority
     for (const cat of firestoreCategories) {
-        if (!seenHrefs.has(cat.href)) {
-            seenHrefs.add(cat.href);
-            allLinks.push(cat);
-        }
-    }
-    // Then MDX categories (if not already added)
-    for (const cat of mdxCategories) {
         if (!seenHrefs.has(cat.href)) {
             seenHrefs.add(cat.href);
             allLinks.push(cat);

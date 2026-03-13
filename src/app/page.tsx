@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { getAllReviews as getAllMdxReviews } from "@/lib/mdx";
 import { getPosts as getFirestorePosts } from "@/services/postService";
 import PublicLayout from "@/components/layout/PublicLayout";
 
@@ -11,20 +10,7 @@ export const metadata = {
 export const revalidate = 60;
 
 export default async function Home() {
-  const mdxReviews = await getAllMdxReviews();
   const firestorePosts = await getFirestorePosts();
-
-  // Standardize format
-  const formattedMdx = mdxReviews.map(review => ({
-    slug: review.slug,
-    title: review.frontmatter.title,
-    excerpt: review.frontmatter.excerpt,
-    coverImage: review.frontmatter.featuredImage,
-    category: review.frontmatter.category,
-    date: review.frontmatter.date,
-    articleType: "sales" as const,
-    origin: "mdx",
-  }));
 
   const formattedFirestore = firestorePosts
     .filter(post => post.status === "published")
@@ -39,7 +25,7 @@ export default async function Home() {
       origin: "firestore",
     }));
 
-  const allPosts = [...formattedFirestore, ...formattedMdx];
+  const allPosts = [...formattedFirestore];
 
   return (
     <PublicLayout>
@@ -110,11 +96,6 @@ export default async function Home() {
             )}
           </div>
         </main>
-
-        <footer className="bg-white border-t border-gray-100 mt-20 py-12 text-center text-gray-500 text-sm">
-          <p>&copy; {new Date().getFullYear()} Achados Vip da Isa. Todos os direitos reservados.</p>
-          <p className="mt-2">Participante do Programa de Associados da Amazon e Shopee.</p>
-        </footer>
       </div>
     </PublicLayout>
   );
