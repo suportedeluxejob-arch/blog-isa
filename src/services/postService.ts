@@ -55,6 +55,7 @@ export interface BlogPost {
     productPrice?: string;
     productRating?: number;
     affiliateLink?: string;
+    affiliateButtonText?: string;
     // Structured Content Blocks
     pros?: string[];
     cons?: string[];
@@ -92,7 +93,7 @@ export const getPosts = async (): Promise<BlogPost[]> => {
             ...doc.data(),
         })) as BlogPost[];
     } catch (error) {
-        console.warn("Error fetching posts from Firestore (likely permission issue or offline):", error);
+        console.warn("Error fetching posts from Firestore:", error);
         return [];
     }
 };

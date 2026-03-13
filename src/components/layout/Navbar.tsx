@@ -12,7 +12,7 @@ export async function Navbar() {
             href: `/categories/${cat.slug}`,
         }));
     } catch (error) {
-        console.warn("Could not load Firestore categories:", error);
+        console.warn("Could not load Firestore categories in Navbar:", error);
     }
 
     // Get categories from MDX articles (legacy) removed

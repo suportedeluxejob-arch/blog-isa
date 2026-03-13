@@ -47,6 +47,7 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
     const [productPrice, setProductPrice] = useState(initialPost?.productPrice || "");
     const [productRating, setProductRating] = useState(initialPost?.productRating || 0);
     const [affiliateLink, setAffiliateLink] = useState(initialPost?.affiliateLink || "");
+    const [affiliateButtonText, setAffiliateButtonText] = useState(initialPost?.affiliateButtonText || "");
     const [verdict, setVerdict] = useState(initialPost?.verdict || "");
 
     // Structured Content Blocks
@@ -136,6 +137,7 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
                 productPrice: articleType === "sales" ? (productPrice || "") : "",
                 productRating: articleType === "sales" ? (productRating || 0) : 0,
                 affiliateLink: articleType === "sales" ? (affiliateLink || "") : "",
+                affiliateButtonText: articleType === "sales" ? (affiliateButtonText || "") : "",
                 verdict: verdict || "",
                 // Structured blocks - arrays are OK in Firestore
                 pros: pros.filter(p => p.trim()),
@@ -923,6 +925,14 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
                                         className="w-full rounded-lg border border-gray-200 p-3 text-sm focus:border-pink-400 focus:outline-none focus:ring-2 focus:ring-pink-100"
                                         placeholder="https://s.shopee.com.br/..." />
                                     <p className="mt-1 text-xs text-gray-400">rel=&quot;nofollow sponsored&quot; é adicionado automaticamente</p>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Texto do Botão (Opcional)</label>
+                                    <input value={affiliateButtonText} onChange={(e) => setAffiliateButtonText(e.target.value)}
+                                        className="w-full rounded-lg border border-gray-200 p-3 text-sm focus:border-pink-400 focus:outline-none focus:ring-2 focus:ring-pink-100"
+                                        placeholder="Ex: Ver Preço na Shopee" />
+                                    <p className="mt-1 text-xs text-gray-400">Se vazio, usará o padrão &quot;Ver Oferta na Shopee&quot;</p>
                                 </div>
                             </div>
                         </div>

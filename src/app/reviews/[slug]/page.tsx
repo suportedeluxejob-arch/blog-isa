@@ -13,15 +13,15 @@ interface PageProps {
 export const revalidate = 60;
 
 export async function generateStaticParams() {
-    const firestorePosts = await getFirestorePosts();
-
-    const allSlugs = new Set([
-        ...firestorePosts.map((p) => p.slug)
-    ]);
-
-    return Array.from(allSlugs).map((slug) => ({
-        slug,
-    }));
+    try {
+        const firestorePosts = await getFirestorePosts();
+        return (firestorePosts || []).map((p) => ({
+            slug: p.slug,
+        }));
+    } catch (error) {
+        console.error("Error in generateStaticParams:", error);
+        return [];
+    }
 }
 
 export async function generateMetadata({ params }: PageProps) {
@@ -60,17 +60,25 @@ export async function generateMetadata({ params }: PageProps) {
 }
 
 export default async function ReviewPage({ params }: PageProps) {
-    const { slug } = await params;
+    try {
+        const { slug } = await params;
 
-    // 1. Try Firestore
-    const firestorePost = await getFirestorePostBySlug(slug);
+        // 1. Try Firestore
+        const firestorePost = await getFirestorePostBySlug(slug);
 
-    if (firestorePost) {
-        return <PublicLayout><FirestoreArticle post={firestorePost} /></PublicLayout>;
+        if (firestorePost) {
+            return <PublicLayout><FirestoreArticle post={firestorePost} /></PublicLayout>;
+        }
+
+        // If not found in Firestore
+        notFound();
+    } catch (error: any) {
+        // Handle Expected errors (like notFound)
+        if (error?.digest === 'NEXT_NOT_FOUND') throw error;
+        
+        console.error("Error loading ReviewPage:", error);
+        throw error;
     }
-
-    // If not found in Firestore
-    notFound();
 }
 
 // ======================================================
@@ -324,53 +332,84 @@ function FirestoreArticle({ post }: { post: BlogPost }) {
 
                 {/* ======== PRODUCT REVIEW BOX ======== */}
                 {isSalesArticle && post.productName && (
-                    <div className="bg-white border-2 border-pink-200 rounded-2xl p-8 mb-10 shadow-lg relative overflow-hidden">
-                        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-pink-400 via-pink-600 to-purple-500" />
-                        <div className="absolute top-3 right-4 bg-pink-600 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">
-                            Review Oficial
-                        </div>
-
-                        <div className="flex flex-col md:flex-row gap-6 items-center mt-4">
-                            {/* Professional icon instead of cover photo */}
-                            <div className="w-28 h-28 flex-shrink-0 bg-gradient-to-br from-pink-50 to-purple-50 rounded-2xl border border-pink-100 flex items-center justify-center">
-                                <ShieldCheck className="w-14 h-14 text-pink-400" />
-                            </div>
-
-                            <div className="flex-1 text-center md:text-left">
-                                <h3 className="text-2xl font-extrabold text-gray-900 mb-3">{post.productName}</h3>
-
-                                {/* Star Rating */}
-                                {post.productRating && post.productRating > 0 && (
-                                    <div className="flex items-center justify-center md:justify-start gap-1 mb-3">
-                                        {[1, 2, 3, 4, 5].map((star) => (
-                                            <Star
-                                                key={star}
-                                                className={`w-6 h-6 ${star <= (post.productRating || 0) ? "fill-amber-400 text-amber-400" : "text-gray-200"}`}
-                                            />
-                                        ))}
-                                        <span className="ml-2 font-bold text-lg text-gray-800">{post.productRating}/5</span>
+                    <div className="bg-white rounded-3xl border border-gray-100 p-1 mb-12 shadow-xl shadow-pink-500/5 relative group overflow-hidden">
+                        {/* Elegant accent border */}
+                        <div className="absolute inset-0 p-[2px] rounded-3xl bg-gradient-to-br from-pink-100 via-white to-purple-100 -z-10 group-hover:from-pink-200 group-hover:to-purple-200 transition-all duration-500" />
+                        
+                        <div className="bg-white rounded-[22px] p-6 sm:p-8">
+                            <div className="flex flex-col md:flex-row gap-8 items-start sm:items-center">
+                                {/* Product Image/Badge Container */}
+                                <div className="relative group/img aspect-square w-full md:w-44 flex-shrink-0">
+                                    <div className="absolute inset-0 bg-pink-500/10 blur-2xl rounded-full opacity-0 group-hover/img:opacity-100 transition-opacity" />
+                                    <div className="relative h-full w-full bg-gradient-to-br from-white to-pink-50/50 rounded-2xl border border-pink-100 flex items-center justify-center shadow-inner overflow-hidden">
+                                        <Award className="w-16 h-16 text-pink-400 group-hover/img:scale-110 transition-transform duration-500" />
+                                        <div className="absolute top-0 right-0 bg-pink-600 text-[10px] text-white font-black px-2 py-1 rounded-bl-xl shadow-sm uppercase">
+                                            Vip
+                                        </div>
                                     </div>
-                                )}
+                                </div>
 
-                                {/* Price — only show if > 0 */}
-                                {post.productPrice && Number(post.productPrice) > 0 && (
-                                    <p className="text-2xl font-extrabold text-pink-600 mb-4">
-                                        R$ {post.productPrice}
-                                    </p>
-                                )}
+                                <div className="flex-1 w-full space-y-4">
+                                    <div>
+                                        <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-pink-50 text-pink-600 text-[10px] font-bold rounded-full uppercase tracking-widest border border-pink-100 mb-3">
+                                            <ShieldCheck size={12} strokeWidth={3} /> Review Oficial da Isa
+                                        </div>
+                                        <h3 className="text-2xl sm:text-3xl font-black text-gray-900 leading-tight">
+                                            {post.productName}
+                                        </h3>
+                                    </div>
 
-                                {/* Affiliate Button */}
-                                {post.affiliateLink && (
-                                    <a
-                                        href={post.affiliateLink}
-                                        target="_blank"
-                                        rel="nofollow sponsored noopener noreferrer"
-                                        className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-pink-600 to-pink-700 text-white font-bold rounded-xl hover:from-pink-700 hover:to-pink-800 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-lg no-underline"
-                                    >
-                                        Solicitar Orçamento Gratuito
-                                        <ExternalLink size={18} />
-                                    </a>
-                                )}
+                                    <div className="flex flex-wrap items-center gap-6">
+                                        {/* Dynamic Star Rating */}
+                                        {post.productRating && post.productRating > 0 && (
+                                            <div className="flex flex-col gap-1">
+                                                <div className="flex items-center gap-0.5">
+                                                    {[1, 2, 3, 4, 5].map((star) => (
+                                                        <Star
+                                                            key={star}
+                                                            className={`w-4 h-4 ${star <= (post.productRating || 0) ? "fill-amber-400 text-amber-400" : "text-gray-200"}`}
+                                                            strokeWidth={star <= (post.productRating || 0) ? 0 : 2}
+                                                        />
+                                                    ))}
+                                                    <span className="ml-1.5 font-black text-gray-900 text-sm">{(post.productRating).toFixed(1)}</span>
+                                                </div>
+                                                <span className="text-[10px] text-gray-400 uppercase font-bold tracking-tighter">Nota da Isa</span>
+                                            </div>
+                                        )}
+
+                                        {/* Elegant Price Display */}
+                                        {post.productPrice && Number(post.productPrice) > 0 && (
+                                            <div className="flex flex-col gap-0">
+                                                <div className="flex items-baseline gap-1">
+                                                    <span className="text-xs font-bold text-pink-500">R$</span>
+                                                    <span className="text-2xl font-black text-gray-900 tracking-tight">{post.productPrice}</span>
+                                                </div>
+                                                <span className="text-[10px] text-gray-400 uppercase font-bold tracking-tighter">Melhor Oferta Hoje</span>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Action Button - The Star of the Show */}
+                                    <div className="pt-2">
+                                        {post.affiliateLink && (
+                                            <a
+                                                href={post.affiliateLink}
+                                                target="_blank"
+                                                rel="nofollow sponsored noopener noreferrer"
+                                                className="group/btn relative inline-flex items-center justify-center gap-3 w-full sm:w-auto px-10 py-4.5 bg-gray-900 hover:bg-gray-800 text-white font-black rounded-2xl transition-all duration-300 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.3)] hover:shadow-[0_15px_40px_-10px_rgba(0,0,0,0.4)] hover:-translate-y-1 no-underline"
+                                            >
+                                                <span className="relative z-10 flex items-center gap-2">
+                                                    {post.affiliateButtonText || "Ver Oferta na Shopee"}
+                                                    <ExternalLink size={18} className="group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform" />
+                                                </span>
+                                                <div className="absolute inset-0 bg-gradient-to-r from-pink-600 to-purple-600 rounded-2xl opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300" />
+                                            </a>
+                                        )}
+                                        <p className="mt-4 text-[11px] text-gray-400 text-center sm:text-left flex items-center justify-center sm:justify-start gap-1 justify-center sm:justify-start">
+                                            <ShieldCheck size={12} /> Link seguro e verificado por Isabella
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
