@@ -24,6 +24,9 @@ export const metadata: Metadata = {
     locale: "pt_BR",
     siteName: "Achados Vip da Isa",
   },
+  icons: {
+    icon: "/favicon.png",
+  },
 };
 
 export default function RootLayout({
