@@ -39,6 +39,9 @@ export interface BlogPost {
     articleType: "educational" | "sales";
     status: "draft" | "published";
     author: string;
+    authorUrl?: string;
+    authorBio?: string;
+    authorSocialLinks?: string[];
     // SEO Fields
     seoTitle?: string;
     seoDescription?: string;
@@ -52,6 +55,7 @@ export interface BlogPost {
     schemaType?: "Article" | "Product" | "Review" | "BlogPosting";
     // Product-specific (for sales articles)
     productName?: string;
+    brandName?: string;
     productPrice?: string;
     productRating?: number;
     affiliateLink?: string;

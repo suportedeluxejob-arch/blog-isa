@@ -451,13 +451,19 @@ function FirestoreArticle({ post }: { post: BlogPost }) {
                                 "name": post.productName,
                                 "image": post.coverImage ? [post.coverImage] : [],
                                 "description": post.seoDescription || post.excerpt,
-                                "brand": { "@type": "Brand", "name": "Genérico" },
+                                "brand": { "@type": "Brand", "name": post.brandName || "Genérico" },
+                                "mainEntityOfPage": {
+                                    "@type": "WebPage",
+                                    "@id": post.canonicalUrl || `https://achadosvipdaisa.com.br/reviews/${post.slug}`
+                                },
                                 "offers": {
                                     "@type": "Offer",
                                     "url": post.affiliateLink || `https://achadosvipdaisa.com.br/reviews/${post.slug}`,
                                     "priceCurrency": "BRL",
-                                    "price": post.productPrice || "0",
-                                    "availability": "https://schema.org/InStock"
+                                    "price": (post.productPrice || "0").toString().replace(",", "."),
+                                    "priceValidUntil": new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0],
+                                    "availability": "https://schema.org/InStock",
+                                    "itemCondition": "https://schema.org/NewCondition"
                                 },
                                 "review": {
                                     "@type": "Review",
@@ -466,7 +472,15 @@ function FirestoreArticle({ post }: { post: BlogPost }) {
                                         "ratingValue": post.productRating || 0,
                                         "bestRating": "5"
                                     },
-                                    "author": { "@type": "Person", "name": post.author || "Isabelle" }
+                                    "author": { 
+                                        "@type": "Person", 
+                                        "name": post.author || "Isabelle",
+                                        "url": post.authorUrl || "https://achadosvipdaisa.com.br/sobre",
+                                        "sameAs": post.authorSocialLinks || [
+                                            "https://www.facebook.com/isabelle.martinsii.98",
+                                            "https://www.instagram.com/isa.calistar/"
+                                        ]
+                                    }
                                 }
                             }
                             : {
@@ -474,11 +488,23 @@ function FirestoreArticle({ post }: { post: BlogPost }) {
                                 "@type": "BlogPosting",
                                 "headline": post.seoTitle || post.title,
                                 "image": post.coverImage ? [post.coverImage] : [],
-                                "author": { "@type": "Person", "name": post.author || "Isabelle" },
+                                "author": { 
+                                    "@type": "Person", 
+                                    "name": post.author || "Isabelle",
+                                    "url": post.authorUrl || "https://achadosvipdaisa.com.br/sobre",
+                                    "sameAs": post.authorSocialLinks || [
+                                        "https://www.facebook.com/isabelle.martinsii.98",
+                                        "https://www.instagram.com/isa.calistar/"
+                                    ]
+                                },
                                 "publisher": {
                                     "@type": "Organization",
                                     "name": "Achados Vip da Isa",
                                     "logo": { "@type": "ImageObject", "url": "https://achadosvipdaisa.com.br/logo.png" }
+                                },
+                                "mainEntityOfPage": {
+                                    "@type": "WebPage",
+                                    "@id": post.canonicalUrl || `https://achadosvipdaisa.com.br/reviews/${post.slug}`
                                 },
                                 "datePublished": publishDate,
                                 "dateModified": updateDate,
