@@ -23,7 +23,7 @@ const nextConfig: NextConfig = {
       },
       {
         source: '/reviews/guia-tecnico-como-funciona-a-blindagem-automotiva-e-seus-niveis-de-protecao',
-        destination: '/experiencias/guia-tecnico-como-funciona-a-blindagem-automotiva-e-seus-niveis-de-protecao',
+        destination: '/experiencias/o-que-aprendi-sobre-blindagem-rj',
         permanent: true,
       },
       {
