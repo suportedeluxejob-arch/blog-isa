@@ -21,7 +21,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     // 2. Map Posts
     const postEntries: MetadataRoute.Sitemap = posts.map((post) => {
-      const isExperiencia = slugify(post.category || "") === "minhas-experiencias";
+      const isExperiencia = slugify(post.category || "") === "minhas-experiencias" || slugify(post.category || "").includes("blindado") || post.slug.includes("blindado");
       const prefix = isExperiencia ? "experiencias" : "achados";
       
       return {

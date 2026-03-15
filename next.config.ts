@@ -12,13 +12,18 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
-        source: '/reviews/comprei-meu-carro-blindado-na-blindados-rj-minha-experiencia-real',
+        source: '/reviews/vale-a-pena-blindar-o-carro-no-rj',
+        destination: '/experiencias/vale-a-pena-blindar-o-carro-no-rj',
+        permanent: true,
+      },
+      {
+        source: '/reviews/comprar-carro-blindado-rj',
         destination: '/experiencias/comprei-meu-carro-blindado-na-blindados-rj-minha-experiencia-real',
         permanent: true,
       },
       {
-        source: '/reviews/como-funciona-blindados-rj',
-        destination: '/experiencias/como-funciona-blindados-rj',
+        source: '/reviews/guia-tecnico-como-funciona-a-blindagem-automotiva-e-seus-niveis-de-protecao',
+        destination: '/experiencias/guia-tecnico-como-funciona-a-blindagem-automotiva-e-seus-niveis-de-protecao',
         permanent: true,
       },
       {
