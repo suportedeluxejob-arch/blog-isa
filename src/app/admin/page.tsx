@@ -20,7 +20,7 @@ export default function AdminDashboard() {
     const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
-    const [filterType, setFilterType] = useState<"all" | "educational" | "sales">("all");
+    const [filterType, setFilterType] = useState<"all" | "educational" | "sales" | "experience">("all");
     const [filterStatus, setFilterStatus] = useState<"all" | "draft" | "published">("all");
     const [activeTab, setActiveTab] = useState<"posts" | "categories">("posts");
     const router = useRouter();
@@ -77,6 +77,7 @@ export default function AdminDashboard() {
         drafts: posts.filter(p => p.status === "draft").length,
         educational: allDisplayPosts.filter(p => p.articleType === "educational").length,
         sales: allDisplayPosts.filter(p => p.articleType === "sales").length,
+        experience: allDisplayPosts.filter(p => p.articleType === "experience").length,
         categories: categories.length,
     };
 
@@ -100,6 +101,7 @@ export default function AdminDashboard() {
                 <StatsCard icon={<Edit size={20} />} label="Rascunhos" value={stats.drafts} color="yellow" />
                 <StatsCard icon={<BookOpen size={20} />} label="Educacionais" value={stats.educational} color="purple" />
                 <StatsCard icon={<ShoppingBag size={20} />} label="Vendas" value={stats.sales} color="pink" />
+                <StatsCard icon={<FileText size={20} />} label="Relatos" value={stats.experience} color="purple" />
                 <StatsCard icon={<FolderOpen size={20} />} label="Categorias" value={stats.categories} color="indigo" />
             </div>
 
@@ -173,8 +175,8 @@ function PostsTab({
     posts: any[];
     searchQuery: string;
     setSearchQuery: (v: string) => void;
-    filterType: "all" | "educational" | "sales";
-    setFilterType: (v: "all" | "educational" | "sales") => void;
+    filterType: "all" | "educational" | "sales" | "experience";
+    setFilterType: (v: "all" | "educational" | "sales" | "experience") => void;
     filterStatus: "all" | "draft" | "published";
     setFilterStatus: (v: "all" | "draft" | "published") => void;
     onDelete: (id: string) => void;
@@ -202,6 +204,7 @@ function PostsTab({
                     <option value="all">Todos os Tipos</option>
                     <option value="educational">📚 Educacional</option>
                     <option value="sales">💰 Vendas</option>
+                    <option value="experience">✍️ Relatos</option>
                 </select>
 
                 <select
@@ -264,11 +267,13 @@ function PostsTab({
                                         }`}>
                                         {post.status === "published" ? "✅ Publicado" : "📝 Rascunho"}
                                     </span>
-                                    <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-medium ${post.articleType === "educational"
-                                        ? "bg-purple-50 text-purple-700"
-                                        : "bg-pink-50 text-pink-700"
+                                    <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-medium ${
+                                        post.articleType === "experience" ? "bg-purple-100 text-purple-700" :
+                                        post.articleType === "educational" ? "bg-blue-50 text-blue-700" :
+                                        "bg-pink-50 text-pink-700"
                                         }`}>
-                                        {post.articleType === "educational" ? "📚 Educacional" : "💰 Vendas"}
+                                        {post.articleType === "experience" ? "✍️ Relato" : 
+                                         post.articleType === "educational" ? "📚 Educacional" : "💰 Vendas"}
                                     </span>
                                     {post.category && (
                                         <span className="rounded-full bg-gray-100 px-2 py-0.5 text-gray-600">
@@ -276,7 +281,7 @@ function PostsTab({
                                         </span>
                                     )}
                                     <span className="text-gray-400">
-                                        /reviews/{post.slug}
+                                        {(post.articleType === 'experience' || post.category === 'Minhas Experiências') ? '/experiencias/' : '/achados/'}{post.slug}
                                     </span>
                                 </div>
                             </div>
