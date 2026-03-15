@@ -26,7 +26,10 @@ export async function generateStaticParams() {
 export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
 
-    const slugify = (text: string) => text.toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, "");
+    const slugify = (text: string) => text.toLowerCase()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .replace(/ /g, "-")
+        .replace(/[^\w-]+/g, "");
 
     // Get Firestore posts for this category
     let firestorePosts: any[] = [];
@@ -61,6 +64,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
         category: post.category,
         date: post.createdAt?.toDate().toLocaleDateString("pt-BR"),
         origin: "firestore",
+        linkPrefix: slugify(post.category || "") === "minhas-experiencias" ? "experiencias" : "achados"
     }));
 
     const allPosts = [...formattedFirestore];
@@ -87,7 +91,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                         {allPosts.map((post) => (
                             <Link
                                 key={post.slug}
-                                href={`/reviews/${post.slug}`}
+                                href={`/${post.linkPrefix}/${post.slug}`}
                                 className="group bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 overflow-hidden flex flex-col"
                             >
                                 <div className="h-48 bg-gray-200 relative overflow-hidden">
@@ -110,7 +114,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
 
                                     <div className="flex items-center justify-between text-sm text-gray-500 pt-4 border-t border-gray-50">
                                         <span>{post.date}</span>
-                                        <span className="font-medium text-pink-600">Ler Review &rarr;</span>
+                                        <span className="font-medium text-pink-600">Ler Artigo &rarr;</span>
                                     </div>
                                 </div>
                             </Link>

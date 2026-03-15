@@ -14,13 +14,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Filter published posts in memory to avoid Firestore index issues
     const posts = allPosts.filter(p => p.status === 'published');
 
+    const slugify = (text: string) => text.toLowerCase()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .replace(/ /g, "-")
+        .replace(/[^\w-]+/g, "");
+
     // 2. Map Posts
-    const postEntries: MetadataRoute.Sitemap = posts.map((post) => ({
-      url: `${baseUrl}/reviews/${post.slug}`,
-      lastModified: post.updatedAt?.toDate?.() || post.createdAt?.toDate?.() || new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.8,
-    }));
+    const postEntries: MetadataRoute.Sitemap = posts.map((post) => {
+      const isExperiencia = slugify(post.category || "") === "minhas-experiencias";
+      const prefix = isExperiencia ? "experiencias" : "achados";
+      
+      return {
+        url: `${baseUrl}/${prefix}/${post.slug}`,
+        lastModified: post.updatedAt?.toDate?.() || post.createdAt?.toDate?.() || new Date(),
+        changeFrequency: 'weekly',
+        priority: 0.8,
+      };
+    });
 
     // 3. Map Categories
     const categoryEntries: MetadataRoute.Sitemap = categories.map((category) => ({
