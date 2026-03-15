@@ -18,7 +18,7 @@ const nextConfig: NextConfig = {
       },
       {
         source: '/reviews/comprar-carro-blindado-rj',
-        destination: '/experiencias/comprei-meu-carro-blindado-na-blindados-rj-minha-experiencia-real',
+        destination: '/experiencias/comprar-carro-blindado-rj',
         permanent: true,
       },
       {
