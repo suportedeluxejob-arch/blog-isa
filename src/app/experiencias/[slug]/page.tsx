@@ -15,9 +15,16 @@ export const revalidate = 60;
 export async function generateStaticParams() {
     try {
         const firestorePosts = await getFirestorePosts();
-        return (firestorePosts || []).map((p) => ({
-            slug: p.slug,
-        }));
+        const isExperienciaPost = (cat: string = "", slug: string = "") => {
+            const c = cat.toLowerCase();
+            return c === "carros blindados rj" || c === "minhas experiências" || c === "minhas experiencias" || slug.includes("blindado");
+        };
+
+        return (firestorePosts || [])
+            .filter((p) => isExperienciaPost(p.category, p.slug))
+            .map((p) => ({
+                slug: p.slug,
+            }));
     } catch (error) {
         console.error("Error in generateStaticParams:", error);
         return [];
@@ -67,6 +74,12 @@ export default async function ReviewPage({ params }: PageProps) {
         const firestorePost = await getFirestorePostBySlug(slug);
 
         if (firestorePost) {
+            const cat = firestorePost.category?.toLowerCase() || "";
+            const isExperiencia = cat === "carros blindados rj" || cat === "minhas experiências" || cat === "minhas experiencias" || firestorePost.slug?.includes("blindado");
+            
+            if (!isExperiencia) {
+                notFound();
+            }
             return <PublicLayout><FirestoreArticle post={firestorePost} /></PublicLayout>;
         }
 
@@ -439,64 +452,110 @@ function FirestoreArticle({ post }: { post: BlogPost }) {
                 )}
             </div>
 
-            {/* ======== JSON-LD SCHEMA ======== */}
+            {/* ======== JSON-LD SCHEMA (ENTITY SEO FOR EXPERIENCES) ======== */}
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{
                     __html: JSON.stringify(
-                        isSalesArticle && post.productName
-                            ? {
-                                "@context": "https://schema.org",
-                                "@type": "Product",
-                                "name": post.productName,
-                                "image": post.coverImage ? [post.coverImage] : [],
-                                "description": post.seoDescription || post.excerpt,
-                                "brand": { "@type": "Brand", "name": post.brandName || "Genérico" },
-                                "mainEntityOfPage": {
-                                    "@type": "WebPage",
-                                    "@id": post.canonicalUrl || `https://achadosvipdaisa.com.br/reviews/${post.slug}`
-                                },
-                                "offers": {
-                                    "@type": "Offer",
-                                    "url": post.affiliateLink || `https://achadosvipdaisa.com.br/reviews/${post.slug}`,
-                                    "priceCurrency": "BRL",
-                                    "price": (post.productPrice || "0").toString().replace(",", "."),
-                                    "priceValidUntil": new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0],
-                                    "availability": "https://schema.org/InStock",
-                                    "itemCondition": "https://schema.org/NewCondition"
-                                },
-                                "review": {
-                                    "@type": "Review",
-                                    "reviewRating": {
-                                        "@type": "Rating",
-                                        "ratingValue": post.productRating || 0,
-                                        "bestRating": "5"
+                        (() => {
+                            // Base author object
+                            const authorData = {
+                                "@type": "Person",
+                                "name": post.author || "Isabelle",
+                                "url": post.authorUrl || "https://achadosvipdaisa.com.br/sobre",
+                                "sameAs": post.authorSocialLinks || [
+                                    "https://www.facebook.com/isabelle.martinsii.98",
+                                    "https://www.instagram.com/isa.calistar/"
+                                ]
+                            };
+
+                            // IF it's flagged as experience (Lifestyle/YMYL) -> FORBID Product schema
+                            if (post.articleType === "experience") {
+                                const experiencePayload: any = {
+                                    "@context": "https://schema.org",
+                                    "@type": "BlogPosting",
+                                    "headline": post.seoTitle || post.title,
+                                    "image": post.coverImage ? [post.coverImage] : [],
+                                    "author": authorData,
+                                    "publisher": {
+                                        "@type": "Organization",
+                                        "name": "Achados Vip da Isa",
+                                        "logo": { "@type": "ImageObject", "url": "https://achadosvipdaisa.com.br/logo.png" }
                                     },
-                                    "author": { 
-                                        "@type": "Person", 
-                                        "name": post.author || "Isabelle",
-                                        "url": post.authorUrl || "https://achadosvipdaisa.com.br/sobre",
-                                        "sameAs": post.authorSocialLinks || [
-                                            "https://www.facebook.com/isabelle.martinsii.98",
-                                            "https://www.instagram.com/isa.calistar/"
-                                        ]
-                                    }
+                                    "mainEntityOfPage": {
+                                        "@type": "WebPage",
+                                        "@id": post.canonicalUrl || `https://achadosvipdaisa.com.br/experiencias/${post.slug}`
+                                    },
+                                    "datePublished": publishDate,
+                                    "dateModified": updateDate,
+                                    "description": post.seoDescription || post.excerpt,
+                                };
+
+                                if (post.seoKeywords) {
+                                    experiencePayload.keywords = post.seoKeywords;
                                 }
+
+                                // Injects the primary Entity that is related to the experience (e.g Armored Car)
+                                if (post.schemaAboutName) {
+                                    experiencePayload.about = {
+                                        "@type": "Thing",
+                                        "name": post.schemaAboutName,
+                                        ...(post.schemaAboutUrl ? { "sameAs": post.schemaAboutUrl } : {})
+                                    };
+                                }
+
+                                // Maps secondary Topics to semantic vectors
+                                if (post.schemaMentions && post.schemaMentions.length > 0) {
+                                    experiencePayload.mentions = post.schemaMentions.map(mention => ({
+                                        "@type": "Thing",
+                                        "name": mention
+                                    }));
+                                }
+
+                                return experiencePayload;
                             }
-                            : {
+
+                            // Standard logic for Pure Sales (Non-YMYL)
+                            if (isSalesArticle && post.productName) {
+                                return {
+                                    "@context": "https://schema.org",
+                                    "@type": "Product",
+                                    "name": post.productName,
+                                    "image": post.coverImage ? [post.coverImage] : [],
+                                    "description": post.seoDescription || post.excerpt,
+                                    "brand": { "@type": "Brand", "name": post.brandName || "Genérico" },
+                                    "mainEntityOfPage": {
+                                        "@type": "WebPage",
+                                        "@id": post.canonicalUrl || `https://achadosvipdaisa.com.br/experiencias/${post.slug}`
+                                    },
+                                    "offers": {
+                                        "@type": "Offer",
+                                        "url": post.affiliateLink || `https://achadosvipdaisa.com.br/experiencias/${post.slug}`,
+                                        "priceCurrency": "BRL",
+                                        "price": (post.productPrice || "0").toString().replace(",", "."),
+                                        "priceValidUntil": new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0],
+                                        "availability": "https://schema.org/InStock",
+                                        "itemCondition": "https://schema.org/NewCondition"
+                                    },
+                                    "review": {
+                                        "@type": "Review",
+                                        "reviewRating": {
+                                            "@type": "Rating",
+                                            "ratingValue": post.productRating || 0,
+                                            "bestRating": "5"
+                                        },
+                                        "author": authorData
+                                    }
+                                };
+                            }
+
+                            // Fallback for base Articles
+                            return {
                                 "@context": "https://schema.org",
                                 "@type": "BlogPosting",
                                 "headline": post.seoTitle || post.title,
                                 "image": post.coverImage ? [post.coverImage] : [],
-                                "author": { 
-                                    "@type": "Person", 
-                                    "name": post.author || "Isabelle",
-                                    "url": post.authorUrl || "https://achadosvipdaisa.com.br/sobre",
-                                    "sameAs": post.authorSocialLinks || [
-                                        "https://www.facebook.com/isabelle.martinsii.98",
-                                        "https://www.instagram.com/isa.calistar/"
-                                    ]
-                                },
+                                "author": authorData,
                                 "publisher": {
                                     "@type": "Organization",
                                     "name": "Achados Vip da Isa",
@@ -504,13 +563,14 @@ function FirestoreArticle({ post }: { post: BlogPost }) {
                                 },
                                 "mainEntityOfPage": {
                                     "@type": "WebPage",
-                                    "@id": post.canonicalUrl || `https://achadosvipdaisa.com.br/reviews/${post.slug}`
+                                    "@id": post.canonicalUrl || `https://achadosvipdaisa.com.br/experiencias/${post.slug}`
                                 },
                                 "datePublished": publishDate,
                                 "dateModified": updateDate,
                                 "description": post.seoDescription || post.excerpt,
                                 ...(post.seoKeywords ? { "keywords": post.seoKeywords } : {})
-                            }
+                            };
+                        })()
                     )
                 }}
             />

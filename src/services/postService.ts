@@ -36,7 +36,7 @@ export interface BlogPost {
     excerpt: string;
     coverImage: string;
     category: string;
-    articleType: "educational" | "sales";
+    articleType: "educational" | "sales" | "experience";
     status: "draft" | "published";
     author: string;
     authorUrl?: string;
@@ -53,6 +53,9 @@ export interface BlogPost {
     ogImage?: string;
     // Schema
     schemaType?: "Article" | "Product" | "Review" | "BlogPosting";
+    schemaAboutName?: string;
+    schemaAboutUrl?: string;
+    schemaMentions?: string[];
     // Product-specific (for sales articles)
     productName?: string;
     brandName?: string;

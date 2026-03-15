@@ -29,7 +29,7 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
     const [excerpt, setExcerpt] = useState(initialPost?.excerpt || "");
     const [coverImage, setCoverImage] = useState(initialPost?.coverImage || "");
     const [category, setCategory] = useState(initialPost?.category || "");
-    const [articleType, setArticleType] = useState<"educational" | "sales">(initialPost?.articleType || "educational");
+    const [articleType, setArticleType] = useState<"educational" | "sales" | "experience">(initialPost?.articleType || "educational");
     const [status, setStatus] = useState<"draft" | "published">(initialPost?.status || "draft");
     const [author] = useState(initialPost?.author || "Isabelle");
 
@@ -41,6 +41,12 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
     const [canonicalUrl, setCanonicalUrl] = useState(initialPost?.canonicalUrl || "");
     const [ogTitle, setOgTitle] = useState(initialPost?.ogTitle || "");
     const [ogDescription, setOgDescription] = useState(initialPost?.ogDescription || "");
+
+    // Advanced Schema Fields (Lifestyle / Experiences)
+    const [schemaAboutName, setSchemaAboutName] = useState(initialPost?.schemaAboutName || "");
+    const [schemaAboutUrl, setSchemaAboutUrl] = useState(initialPost?.schemaAboutUrl || "");
+    // Internal state can handle comma-separated strings for easy input, parsed on save
+    const [schemaMentionsStr, setSchemaMentionsStr] = useState(initialPost?.schemaMentions?.join(", ") || "");
 
     // Product Fields (for sales articles)
     const [productName, setProductName] = useState(initialPost?.productName || "");
@@ -132,7 +138,16 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
                 ogTitle: ogTitle || "",
                 ogDescription: ogDescription || "",
                 ogImage: coverImage || "",
-                schemaType: articleType === "sales" ? "Product" : "Article",
+                // Base schema decision logic
+                schemaType: articleType === "sales" ? "Product" : articleType === "experience" ? "BlogPosting" : "Article",
+                
+                // Advanced Schema payload
+                schemaAboutName: articleType === "experience" ? (schemaAboutName.trim() || "") : "",
+                schemaAboutUrl: articleType === "experience" ? (schemaAboutUrl.trim() || "") : "",
+                schemaMentions: articleType === "experience" 
+                                    ? schemaMentionsStr.split(',').map(m => m.trim()).filter(Boolean) 
+                                    : [],
+                
                 productName: articleType === "sales" ? (productName || "") : "",
                 productPrice: articleType === "sales" ? (productPrice || "") : "",
                 productRating: articleType === "sales" ? (productRating || 0) : 0,
@@ -886,6 +901,41 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
                                         placeholder={excerpt || "Descrição para redes sociais"} />
                                 </div>
                             </div>
+                            
+                            {/* Entity Schema Form (Experiences only) */}
+                            {articleType === "experience" && (
+                            <div className="rounded-xl border border-purple-100 bg-purple-50/20 p-6 shadow-sm space-y-5">
+                                <h3 className="flex items-center gap-2 text-sm font-semibold text-purple-800">
+                                    🧠 Schema Semântico (Relato Pessoal)
+                                </h3>
+                                <p className="text-xs text-purple-600 mb-2">
+                                  Declara a Entidade principal que você está abordando para que o Google não confunda o seu diário com um artigo de especialista técnico (Proteção YMYL).
+                                </p>
+                                
+                                <div className="grid md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Entidade Principal (Nome)</label>
+                                        <input value={schemaAboutName} onChange={(e) => setSchemaAboutName(e.target.value)}
+                                            className="w-full rounded-lg border border-gray-200 p-2 text-sm focus:border-purple-400 focus:outline-none"
+                                            placeholder="Ex: Blindagem de veículos" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Link oficial (Preferência Wikipedia)</label>
+                                        <input value={schemaAboutUrl} onChange={(e) => setSchemaAboutUrl(e.target.value)}
+                                            className="w-full rounded-lg border border-gray-200 p-2 text-sm focus:border-purple-400 focus:outline-none"
+                                            placeholder="Ex: https://pt.wikipedia.org/wiki/Blindagem..." />
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Tópicos Relacionados (Mentions)</label>
+                                    <input value={schemaMentionsStr} onChange={(e) => setSchemaMentionsStr(e.target.value)}
+                                        className="w-full rounded-lg border border-gray-200 p-2 text-sm focus:border-purple-400 focus:outline-none"
+                                        placeholder="Rio de Janeiro, Proteção Balística, Segurança (separe por vírgula)" />
+                                    <p className="mt-1 text-[10px] text-gray-500">Mapeamento em grafo para o GoogleBot ("Topic Cluster").</p>
+                                </div>
+                            </div>
+                            )}
                         </div>
                     )}
 
@@ -948,26 +998,34 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
                         <div className="space-y-4">
                             <div>
                                 <label className="block text-xs font-medium text-gray-500 mb-1.5">Tipo de Artigo</label>
-                                <div className="grid grid-cols-2 gap-2">
+                                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                                     <button
                                         onClick={() => setArticleType("educational")}
-                                        className={`flex flex-col items-center gap-1 rounded-lg border-2 p-3 text-xs font-medium transition-all ${articleType === "educational"
+                                        className={`flex flex-col items-center gap-1 rounded-lg border-2 p-2 text-xs font-medium transition-all ${articleType === "educational"
                                             ? "border-purple-400 bg-purple-50 text-purple-700"
                                             : "border-gray-200 text-gray-500 hover:border-gray-300"}`}
                                     >
                                         📚
-                                        <span>Educacional</span>
-                                        <span className="text-[10px] opacity-60">Ranking SEO</span>
+                                        <span>Artigo</span>
                                     </button>
                                     <button
                                         onClick={() => setArticleType("sales")}
-                                        className={`flex flex-col items-center gap-1 rounded-lg border-2 p-3 text-xs font-medium transition-all ${articleType === "sales"
+                                        className={`flex flex-col items-center gap-1 rounded-lg border-2 p-2 text-xs font-medium transition-all ${articleType === "sales"
                                             ? "border-pink-400 bg-pink-50 text-pink-700"
                                             : "border-gray-200 text-gray-500 hover:border-gray-300"}`}
                                     >
                                         💰
-                                        <span>Vendas</span>
-                                        <span className="text-[10px] opacity-60">Review / Afiliado</span>
+                                        <span>Venda</span>
+                                    </button>
+                                    <button
+                                        onClick={() => setArticleType("experience")}
+                                        className={`flex flex-col items-center gap-1 rounded-lg border-2 p-2 text-xs font-medium transition-all ${articleType === "experience"
+                                            ? "border-emerald-400 bg-emerald-50 text-emerald-700"
+                                            : "border-gray-200 text-gray-500 hover:border-gray-300"}`}
+                                        title="Relato Pessoal Livre (Lifestyle/Experiências)"
+                                    >
+                                        ✍️
+                                        <span>Relato</span>
                                     </button>
                                 </div>
                             </div>

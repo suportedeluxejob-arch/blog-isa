@@ -7,10 +7,12 @@ export async function Navbar() {
     let firestoreCategories: { label: string; href: string }[] = [];
     try {
         const cats = await getCategories();
-        firestoreCategories = cats.map((cat) => ({
-            label: cat.name,
-            href: `/categories/${cat.slug}`,
-        }));
+        firestoreCategories = cats
+            .filter(cat => cat.slug !== 'carros-blindados-rj' && cat.name.toLowerCase() !== 'carros blindados rj')
+            .map((cat) => ({
+                label: cat.name,
+                href: `/categories/${cat.slug}`,
+            }));
     } catch (error) {
         console.warn("Could not load Firestore categories in Navbar:", error);
     }
