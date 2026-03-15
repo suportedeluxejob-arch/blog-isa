@@ -64,7 +64,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
         category: post.category,
         date: post.createdAt?.toDate().toLocaleDateString("pt-BR"),
         origin: "firestore",
-        linkPrefix: slugify(post.category || "") === "minhas-experiencias" ? "experiencias" : "achados"
+        linkPrefix: (slugify(post.category || "") === "minhas-experiencias" || slugify(post.category || "").includes("blindado")) ? "experiencias" : "achados"
     }));
 
     const allPosts = [...formattedFirestore];
@@ -73,15 +73,21 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
         return notFound();
     }
 
+    const isExperienciaCategory = slug === "minhas-experiencias" || slug.includes("blindado");
+    const themeColorTextUrl = isExperienciaCategory ? "text-purple-700" : "text-pink-700";
+    const themeColorText = isExperienciaCategory ? "text-purple-600" : "text-pink-600";
+    const themeGroupHoverText = isExperienciaCategory ? "group-hover:text-purple-600" : "group-hover:text-pink-600";
+    const readText = isExperienciaCategory ? "Ler Relato" : "Ler Artigo";
+
     return (
         <PublicLayout>
             <div className="min-h-screen bg-gray-50 font-sans pb-20">
                 <header className="bg-white border-b border-gray-100 py-12 px-6 text-center">
-                    <Link href="/" className="inline-flex items-center text-pink-700 font-medium mb-8 hover:underline">
+                    <Link href="/" className={`inline-flex items-center ${themeColorTextUrl} font-medium mb-8 hover:underline`}>
                         <ChevronLeft size={16} className="mr-1" /> Voltar para Home
                     </Link>
                     <h1 className="text-4xl font-bold text-gray-900 mb-4 tracking-tight">
-                        Categoria: <span className="text-pink-600">{categoryName}</span>
+                        Categoria: <span className={themeColorText}>{categoryName}</span>
                     </h1>
                     <p className="text-gray-600">{allPosts.length} artigo(s) encontrado(s)</p>
                 </header>
@@ -99,13 +105,13 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                                         <div className="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-500"
                                             style={{ backgroundImage: `url(${post.coverImage})` }} />
                                     )}
-                                    <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-pink-600 uppercase tracking-wide">
+                                    <div className={`absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold ${themeColorText} uppercase tracking-wide`}>
                                         {post.category}
                                     </div>
                                 </div>
 
                                 <div className="p-6 flex-1 flex flex-col">
-                                    <h3 className="text-xl font-bold text-gray-900 group-hover:text-pink-600 transition-colors mb-3">
+                                    <h3 className={`text-xl font-bold text-gray-900 ${themeGroupHoverText} transition-colors mb-3`}>
                                         {post.title}
                                     </h3>
                                     <p className="text-gray-600 text-sm line-clamp-3 mb-6 flex-1">
@@ -114,7 +120,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
 
                                     <div className="flex items-center justify-between text-sm text-gray-500 pt-4 border-t border-gray-50">
                                         <span>{post.date}</span>
-                                        <span className="font-medium text-pink-600">Ler Artigo &rarr;</span>
+                                        <span className={`font-medium ${themeColorText}`}>{readText} &rarr;</span>
                                     </div>
                                 </div>
                             </Link>
