@@ -23,6 +23,31 @@ export async function generateStaticParams() {
     return Array.from(allSlugs).map((slug) => ({ slug }));
 }
 
+export async function generateMetadata({ params, searchParams }: { params: Promise<{ slug: string }>, searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
+    const { slug } = await params;
+    const resolvedSearchParams = await searchParams;
+    const pageObj = resolvedSearchParams.page;
+    const pageNum = typeof pageObj === 'string' ? parseInt(pageObj, 10) : 1;
+    
+    // Get category name
+    let categoryName = slug;
+    try {
+        const cats = await getCategories();
+        const matchedCat = cats.find(c => c.slug === slug);
+        if (matchedCat) categoryName = matchedCat.name;
+    } catch { }
+
+    const suffix = pageNum > 1 ? ` - Página ${pageNum}` : "";
+    const title = `${categoryName} | Achados Vip da Isa${suffix}`;
+    const description = `Confira todos os artigos, reviews e relatos sobre ${categoryName} no Achados Vip da Isa.${suffix}`;
+
+    return {
+        title,
+        description,
+        openGraph: { title, description }
+    };
+}
+
 export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
 

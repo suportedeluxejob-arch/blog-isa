@@ -81,7 +81,23 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
                 horizontalRule: {},
             }),
             ImageExtension,
-            LinkExtension.configure({ openOnClick: false }),
+            LinkExtension.extend({
+                addAttributes() {
+                    return {
+                        ...this.parent?.(),
+                        rel: {
+                            default: null,
+                            renderHTML: attributes => {
+                                if (!attributes.href) return {};
+                                const isInternal = attributes.href.startsWith('/') || attributes.href.includes('achadosvipdaisa.com.br');
+                                return {
+                                    rel: isInternal ? '' : 'nofollow sponsored noopener noreferrer'
+                                };
+                            }
+                        }
+                    };
+                }
+            }).configure({ openOnClick: false }),
             TextStyle,
             Color,
         ],
