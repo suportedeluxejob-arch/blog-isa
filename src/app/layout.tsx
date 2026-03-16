@@ -24,6 +24,10 @@ export const metadata: Metadata = {
     locale: "pt_BR",
     siteName: "Achados Vip da Isa",
   },
+  metadataBase: new URL('https://www.achadosvipdaisa.com.br'),
+  alternates: {
+    canonical: '/',
+  },
   icons: {
     icon: [
       { url: "/favicon.png" },

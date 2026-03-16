@@ -7,6 +7,17 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'achadosvipdaisa.com.br',
+          },
+        ],
+        destination: 'https://www.achadosvipdaisa.com.br/:path*',
+        permanent: true,
+      },
+      {
         source: '/reviews/vale-a-pena-blindar-o-carro-no-rj',
         destination: '/experiencias/vale-a-pena-blindar-o-carro-no-rj',
         permanent: true,
