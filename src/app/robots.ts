@@ -7,7 +7,7 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: '/admin/',
     },
-    sitemap: 'https://achadosvipdaisa.com.br/sitemap.xml',
+    sitemap: 'https://www.achadosvipdaisa.com.br/sitemap.xml',
   };
 }
 

@@ -27,6 +27,16 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
+        source: '/reviews/como-funciona-blindados-rj',
+        destination: '/experiencias/como-funciona-blindados-rj',
+        permanent: true,
+      },
+      {
+        source: '/achados/como-funciona-blindados-rj',
+        destination: '/experiencias/como-funciona-blindados-rj',
+        permanent: true,
+      },
+      {
         source: '/reviews/:slug*',
         destination: '/achados/:slug*',
         permanent: true,

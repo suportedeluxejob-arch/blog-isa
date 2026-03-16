@@ -38,7 +38,8 @@ export async function generateMetadata({ params, searchParams }: { params: Promi
     } catch { }
 
     const suffix = pageNum > 1 ? ` - Página ${pageNum}` : "";
-    const title = `${categoryName} | Achados Vip da Isa${suffix}`;
+    const baseTitle = `${categoryName}${suffix}`;
+    const title = baseTitle.length > 50 ? baseTitle : `${baseTitle} | Achados Vip da Isa`;
     const description = `Confira todos os artigos, reviews e relatos sobre ${categoryName} no Achados Vip da Isa.${suffix}`;
 
     return {

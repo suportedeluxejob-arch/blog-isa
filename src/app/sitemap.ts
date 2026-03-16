@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next';
 import { getPosts, getCategories } from '@/services/postService';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://achadosvipdaisa.com.br';
+  const baseUrl = 'https://www.achadosvipdaisa.com.br';
 
   try {
     // 1. Fetch data from Firebase

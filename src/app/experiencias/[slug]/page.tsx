@@ -42,7 +42,7 @@ export async function generateMetadata({ params }: PageProps) {
         const effectiveOgDesc = firestorePost.ogDescription || effectiveDesc;
 
         return {
-            title: `${effectiveTitle} | Achados Vip da Isa`,
+            title: effectiveTitle.length > 50 ? effectiveTitle : `${effectiveTitle} | Achados Vip da Isa`,
             description: effectiveDesc,
             keywords: firestorePost.seoKeywords,
             ...(firestorePost.canonicalUrl ? { alternates: { canonical: firestorePost.canonicalUrl } } : {}),
@@ -215,7 +215,19 @@ function FirestoreArticle({ post }: { post: BlogPost }) {
                             prose-li:pl-1
                             prose-blockquote:border-l-pink-400 prose-blockquote:bg-pink-50/50 prose-blockquote:rounded-r-lg prose-blockquote:py-1 prose-blockquote:px-4
                             prose-img:rounded-xl prose-img:shadow-md"
-                        dangerouslySetInnerHTML={{ __html: post.content }}
+                        dangerouslySetInnerHTML={{ 
+                            __html: (post.content || "").replace(
+                                /<a([^>]+)href="([^"]+)"([^>]*)rel="([^"]+)"([^>]*)>/gi,
+                                (match, prefix, href, middle, rel, suffix) => {
+                                    const isInternal = href.startsWith('/') || href.includes('achadosvipdaisa.com.br');
+                                    if (isInternal && rel.toLowerCase().includes('nofollow')) {
+                                        const cleanRel = rel.replace(/(nofollow|sponsored|noopener|noreferrer)/gi, '').trim();
+                                        return `<a${prefix}href="${href}"${middle}${cleanRel ? `rel="${cleanRel}"` : ''}${suffix}>`;
+                                    }
+                                    return match;
+                                }
+                            ) 
+                        }}
                     />
                 </div>
 
@@ -462,7 +474,7 @@ function FirestoreArticle({ post }: { post: BlogPost }) {
                             const authorData = {
                                 "@type": "Person",
                                 "name": post.author || "Isabelle",
-                                "url": post.authorUrl || "https://achadosvipdaisa.com.br/sobre",
+                                "url": post.authorUrl || "https://www.achadosvipdaisa.com.br/sobre",
                                 "sameAs": post.authorSocialLinks || [
                                     "https://www.facebook.com/isabelle.martinsii.98",
                                     "https://www.instagram.com/isa.calistar/"
@@ -480,11 +492,11 @@ function FirestoreArticle({ post }: { post: BlogPost }) {
                                     "publisher": {
                                         "@type": "Organization",
                                         "name": "Achados Vip da Isa",
-                                        "logo": { "@type": "ImageObject", "url": "https://achadosvipdaisa.com.br/logo.png" }
+                                        "logo": { "@type": "ImageObject", "url": "https://www.achadosvipdaisa.com.br/logo.png" }
                                     },
                                     "mainEntityOfPage": {
                                         "@type": "WebPage",
-                                        "@id": post.canonicalUrl || `https://achadosvipdaisa.com.br/experiencias/${post.slug}`
+                                        "@id": post.canonicalUrl || `https://www.achadosvipdaisa.com.br/experiencias/${post.slug}`
                                     },
                                     "datePublished": publishDate,
                                     "dateModified": updateDate,
@@ -526,11 +538,11 @@ function FirestoreArticle({ post }: { post: BlogPost }) {
                                     "brand": { "@type": "Brand", "name": post.brandName || "Genérico" },
                                     "mainEntityOfPage": {
                                         "@type": "WebPage",
-                                        "@id": post.canonicalUrl || `https://achadosvipdaisa.com.br/experiencias/${post.slug}`
+                                        "@id": post.canonicalUrl || `https://www.achadosvipdaisa.com.br/experiencias/${post.slug}`
                                     },
                                     "offers": {
                                         "@type": "Offer",
-                                        "url": post.affiliateLink || `https://achadosvipdaisa.com.br/experiencias/${post.slug}`,
+                                        "url": post.affiliateLink || `https://www.achadosvipdaisa.com.br/experiencias/${post.slug}`,
                                         "priceCurrency": "BRL",
                                         "price": (post.productPrice || "0").toString().replace(",", "."),
                                         "priceValidUntil": new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0],
@@ -559,11 +571,11 @@ function FirestoreArticle({ post }: { post: BlogPost }) {
                                 "publisher": {
                                     "@type": "Organization",
                                     "name": "Achados Vip da Isa",
-                                    "logo": { "@type": "ImageObject", "url": "https://achadosvipdaisa.com.br/logo.png" }
+                                    "logo": { "@type": "ImageObject", "url": "https://www.achadosvipdaisa.com.br/logo.png" }
                                 },
                                 "mainEntityOfPage": {
                                     "@type": "WebPage",
-                                    "@id": post.canonicalUrl || `https://achadosvipdaisa.com.br/experiencias/${post.slug}`
+                                    "@id": post.canonicalUrl || `https://www.achadosvipdaisa.com.br/experiencias/${post.slug}`
                                 },
                                 "datePublished": publishDate,
                                 "dateModified": updateDate,
