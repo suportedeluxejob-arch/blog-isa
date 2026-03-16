@@ -56,6 +56,9 @@ export interface BlogPost {
     schemaAboutName?: string;
     schemaAboutUrl?: string;
     schemaMentions?: string[];
+    // Experience CTA (Visual only, no Schema)
+    ctaLink?: string;
+    ctaText?: string;
     // Product-specific (for sales articles)
     productName?: string;
     brandName?: string;

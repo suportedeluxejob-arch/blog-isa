@@ -453,6 +453,30 @@ function FirestoreArticle({ post }: { post: BlogPost }) {
                     </div>
                 )}
 
+                {/* ======== VISUAL CTA (NO SCHEMA) ======== */}
+                {post.articleType === "experience" && post.ctaLink && (
+                    <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl border border-purple-100 p-8 text-center shadow-lg shadow-purple-900/5 mb-10 transform hover:-translate-y-1 transition-all duration-300">
+                        <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                            <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600">
+                                Gostou deste relato?
+                            </span>
+                        </h3>
+                        <p className="text-gray-600 mb-6 max-w-lg mx-auto">
+                            Transforme essa experiência na sua realidade. Fale diretamente com o especialista.
+                        </p>
+                        <a
+                            href={post.ctaLink}
+                            target="_blank"
+                            rel="nofollow noopener noreferrer"
+                            className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl transition-all duration-300 shadow-md hover:shadow-purple-400/50 hover:scale-105 active:scale-95 no-underline !text-white !no-underline"
+                        >
+                            <span>{post.ctaText || "Fale com o Consultor"}</span>
+                            <ExternalLink size={20} className="translate-y-[-1px]" />
+                        </a>
+                        <p className="mt-4 text-xs text-gray-400 font-medium">Link seguro e direto</p>
+                    </div>
+                )}
+
                 {/* ======== FOOTER DISCLAIMER ======== */}
                 {isSalesArticle && (
                     <div className="text-center text-xs text-gray-400 border-t border-gray-200 pt-8">

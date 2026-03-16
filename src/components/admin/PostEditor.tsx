@@ -47,6 +47,8 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
     const [schemaAboutUrl, setSchemaAboutUrl] = useState(initialPost?.schemaAboutUrl || "");
     // Internal state can handle comma-separated strings for easy input, parsed on save
     const [schemaMentionsStr, setSchemaMentionsStr] = useState(initialPost?.schemaMentions?.join(", ") || "");
+    const [ctaLink, setCtaLink] = useState(initialPost?.ctaLink || "");
+    const [ctaText, setCtaText] = useState(initialPost?.ctaText || "");
 
     // Product Fields (for sales articles)
     const [productName, setProductName] = useState(initialPost?.productName || "");
@@ -163,6 +165,8 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
                 schemaMentions: articleType === "experience" 
                                     ? schemaMentionsStr.split(',').map(m => m.trim()).filter(Boolean) 
                                     : [],
+                ctaLink: articleType === "experience" ? (ctaLink || "") : "",
+                ctaText: articleType === "experience" ? (ctaText || "") : "",
                 
                 productName: articleType === "sales" ? (productName || "") : "",
                 productPrice: articleType === "sales" ? (productPrice || "") : "",
@@ -949,6 +953,25 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
                                         className="w-full rounded-lg border border-gray-200 p-2 text-sm focus:border-purple-400 focus:outline-none"
                                         placeholder="Rio de Janeiro, Proteção Balística, Segurança (separe por vírgula)" />
                                     <p className="mt-1 text-[10px] text-gray-500">Mapeamento em grafo para o GoogleBot ("Topic Cluster").</p>
+                                </div>
+
+                                <div className="pt-4 border-t border-purple-200/50">
+                                    <h4 className="text-sm font-semibold text-purple-800 mb-2 flex items-center gap-1.5"><Target size={14} /> CTA Visual (Sem Schema)</h4>
+                                    <p className="text-xs text-purple-600 mb-3">Botão de conversão que aparece no fim do artigo sem engatilhar o Schema de Oferta (Protege o YMYL).</p>
+                                    <div className="grid md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Link do Botão (WhatsApp/Afiliado)</label>
+                                            <input value={ctaLink} onChange={(e) => setCtaLink(e.target.value)}
+                                                className="w-full rounded-lg border border-gray-200 p-2 text-sm focus:border-purple-400 focus:outline-none"
+                                                placeholder="https://wa.me/..." />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Texto do Botão</label>
+                                            <input value={ctaText} onChange={(e) => setCtaText(e.target.value)}
+                                                className="w-full rounded-lg border border-gray-200 p-2 text-sm focus:border-purple-400 focus:outline-none"
+                                                placeholder="Fale com o Consultor Agora" />
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             )}
