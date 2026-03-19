@@ -27,13 +27,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       };
     });
 
-    // 3. Map Categories
-    const categoryEntries: MetadataRoute.Sitemap = categories.map((category) => ({
-      url: `${baseUrl}/categories/${category.slug}`,
-      lastModified: category.createdAt?.toDate?.() || new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    }));
+    // 3. Map Categories (Filtered)
+    const categoryEntries: MetadataRoute.Sitemap = categories
+      .filter((category) => category.slug !== 'carros-blindados-rj' && category.name.toLowerCase() !== 'carros blindados rj')
+      .map((category) => ({
+        url: `${baseUrl}/categories/${category.slug}`,
+        lastModified: category.createdAt?.toDate?.() || new Date(),
+        changeFrequency: 'monthly',
+        priority: 0.6,
+      }));
 
     // 4. Static Pages
     const staticEntries: MetadataRoute.Sitemap = [

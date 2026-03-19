@@ -26,6 +26,13 @@ export default function Politica() {
           <p>
             É importante reforçar nossa adequação com a <strong>LGPD (Lei Geral de Proteção de Dados)</strong>. Nós nunca cedemos, permutamos e muito menos <strong>vendemos</strong> os seus dados de registro, de uso, nome ou navegação para quaisquer empresas terceirizadas em troca de compensação financeira. Nossa parceria é com você e seus dados ficam onde estão.
           </p>
+
+          <h2>Contato e Identificação Legal (Encarregado de Dados)</h2>
+          <p>
+            Para quaisquer dúvidas relacionadas a esta Política, aos nossos Termos de Uso, ou para exercer seus direitos legais previstos na LGPD, entre em contato direto com a responsável pela entidade do Achados Vip da Isa:<br />
+            <strong>Nome:</strong> Isabelle Martins<br />
+            <strong>E-mail Oficial:</strong> contato@achadosvipdaisa.com.br
+          </p>
         </article>
       </main>
     </PublicLayout>

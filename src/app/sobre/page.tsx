@@ -17,17 +17,12 @@ export default function Sobre() {
             Eu sou a Isabelle, assim como você: <strong>uma consumidora real</strong>. Cansada de comprar coisas ruins, cair em furadas anunciadas na internet e perder dinheiro com promessas milagrosas, decidi mudar o jogo. Comecei a testar tudo o que comprava de forma honesta, sem maquiagem e sem filtros da publicidade tradicional. O "Achados Vip da Isa" nasceu da minha própria necessidade de consumir melhor.
           </p>
 
-          <h2>Por que o blog fala de tantos assuntos?</h2>
+          <h2>A Minha Especialidade</h2>
           <p>
-            Se tem algo curioso sobre minha rotina é que ela nunca para num único assunto. Você vai me ver fazendo review desde um Mop Giratório de R$ 40 que salvou a minha faxina, até falando sobre a blindagem de carros de luxo, viagens inesquecíveis ou sobre organização financeira.
+            Sou especialista em testar e curar utilidades domésticas, produtos de beleza e itens práticos para facilitar a rotina diária. Meu método é simples e direto: eu mesma compro a grande maioria dos produtos, aplico no meu dia a dia por um período de tempo razoável e avalio coisas que a publicidade não mostra, como durabilidade real, custo-benefício e facilidade de manutenção. 
           </p>
           <p>
-            Aqui, o nicho não é um único produto. O nicho é a <strong>"Vida e as Experiências da Isa"</strong>. Este espaço funciona como o meu "diário aberto". Eu simplesmente documento o que funciona para mim e, tão importante quanto: o que <em>não</em> funciona na prática. Se eu vivi e testei, vira artigo aqui.
-          </p>
-
-          <h2>A Nossa Missão</h2>
-          <p>
-            Ajudar outras pessoas a tomarem as melhores decisões do dia a dia. Sem propagandas mascaradas, sem discursos prontos. Apenas a minha vivência servindo de bússola para que você faça uma escolha inteligente baseada em testes <strong>reais</strong>.
+            Neste espaço, foco estritamente em **Lifestyle, Achados e Reviews**. O objetivo é que a minha vivência sirva como filtro e bússola confiável para você fazer sempre uma escolha inteligente baseada em testes <strong>reais</strong>.
           </p>
 
           <h2>Transparência: Como o blog se mantém</h2>
