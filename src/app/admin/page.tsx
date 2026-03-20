@@ -171,7 +171,7 @@ function StatsCard({ icon, label, value, color }: { icon: React.ReactNode; label
 
 // ============ Posts Tab ============
 function PostsTab({
-    posts, searchQuery, setSearchQuery, filterType, setFilterType, filterStatus, setFilterStatus, onDelete
+    posts, searchQuery, setSearchQuery, filterType, setFilterType, filterStatus, setFilterStatus, onDelete, onRefresh
 }: {
     posts: any[];
     searchQuery: string;
