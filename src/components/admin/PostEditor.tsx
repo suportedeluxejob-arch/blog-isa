@@ -26,6 +26,12 @@ const cleanContent = (html: string) => {
     return html.replace(/\[cite:.*?\]/g, '').replace(/\[cite_start\]/g, '');
 };
 
+const cleanUrl = (url: string) => {
+    if (!url) return "";
+    const match = url.match(/\((https?:\/\/.*?)\)/);
+    return match ? match[1] : url;
+};
+
 export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
     // Content Fields
     const [title, setTitle] = useState(initialPost?.title || "");
@@ -143,8 +149,8 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
 
         // Base fields visible to ALL article types in the UI
         const baseData: any = {
-            title, slug, excerpt, coverImage, content: finalContent, category, articleType, searchIntent, status, author, 
-            seoTitle, seoDescription, seoKeywords, focusKeyword, canonicalUrl, ogTitle, ogDescription, ogImage: coverImage, 
+            title, slug, excerpt, coverImage: cleanUrl(coverImage), content: finalContent, category, articleType, searchIntent, status, author, 
+            seoTitle, seoDescription, seoKeywords, focusKeyword, canonicalUrl: cleanUrl(canonicalUrl), ogTitle, ogDescription, ogImage: cleanUrl(coverImage), 
             schemaType: articleType === "sales" ? "Product" : articleType === "experience" ? "BlogPosting" : "Article", 
             
             // Blocks tab (visible to all)
@@ -251,14 +257,35 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
         if (!title || title.trim().length < 40) { alert("🚨 Título muito fraco para SEO (mínimo 40 caracteres)."); return; }
         if (!slug.trim()) { alert("Slug é obrigatório"); return; }
         if (!searchIntent) { alert("🚨 Selecione a intenção de busca (SEO)."); return; }
+        if (!coverImage) { alert("🚨 Artigo precisa de imagem principal."); return; }
+        if (category === "Reviews Sinceros") { alert("🚨 Categoria genérica 'Reviews Sinceros' não é permitida. Use uma categoria estratégica."); return; }
+        if (!seoDescription || seoDescription.trim().length < 120) { alert("🚨 Meta description fraca (mínimo 120 caracteres)."); return; }
+        if (!focusKeyword) { alert("🚨 O artigo requer uma Palavra-Chave Principal."); return; }
+        if (!title.toLowerCase().includes(focusKeyword.toLowerCase().trim())) { alert("🚨 O título do artigo deve obrigatoriamente conter a palavra-chave principal."); return; }
+        if (faqItems.length < 3) { alert("🚨 Adicione pelo menos 3 perguntas no FAQ para Rich Results."); return; }
+
+        let rawContent = editor.getHTML();
+        let finalContent = cleanContent(rawContent);
+
+        const hasTableInHtml = finalContent.includes("<table") || finalContent.includes("<TABLE");
         
-        if (comparisonTable.length > 0 && comparisonTable.length < 2) {
-            alert("🚨 Tabela precisa ter pelo menos 2 itens para comparação.");
+        if (hasTableInHtml && comparisonTable.length === 0) {
+            alert("🚨 Existe tabela no conteúdo mas não foi preenchida na aba de 'Tabela de Comparação (SEO)'. O sistema foi bloqueado.");
             return;
         }
 
-        const rawContent = editor.getHTML();
-        const finalContent = cleanContent(rawContent);
+        if (comparisonTable.length > 0) {
+            if (comparisonTable.length < 2) {
+                alert("🚨 Tabela na aba 'Blocos' precisa ter pelo menos 2 itens cadastrados para comparação.");
+                return;
+            }
+            const tableRows = comparisonTable.map(item => `<tr><td>${item.label}</td><td>${item.peso || ""}</td><td>${item.preco || ""}</td><td>${item.precoKg || ""}</td></tr>`).join("");
+            const tableHtml = `<table border="1"><thead><tr><th>Opção de Compra</th><th>Peso/Unidade</th><th>Preço Estimado</th><th>Custo (Unidade/Kg)</th></tr></thead><tbody>${tableRows}</tbody></table>`;
+            
+            if (hasTableInHtml) {
+                finalContent = finalContent.replace(/<table[\s\S]*?<\/table>/i, tableHtml);
+            }
+        }
         
         // SEO/Quality Checks
         const textOnly = finalContent.replace(/<[^>]+>/g, ' ');
@@ -279,7 +306,7 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
                 title,
                 slug,
                 excerpt: excerpt || "",
-                coverImage: coverImage || "",
+                coverImage: cleanUrl(coverImage) || "",
                 content: finalContent,
                 category: category || "",
                 articleType,
@@ -290,10 +317,10 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
                 seoDescription: seoDescription || "",
                 seoKeywords: seoKeywords || "",
                 focusKeyword: focusKeyword || "",
-                canonicalUrl: canonicalUrl || "",
+                canonicalUrl: cleanUrl(canonicalUrl) || "",
                 ogTitle: ogTitle || "",
                 ogDescription: ogDescription || "",
-                ogImage: coverImage || "",
+                ogImage: cleanUrl(coverImage) || "",
                 // Base schema decision logic
                 schemaType: articleType === "sales" ? "Product" : articleType === "experience" ? "BlogPosting" : "Article",
                 
