@@ -30,6 +30,7 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
     const [coverImage, setCoverImage] = useState(initialPost?.coverImage || "");
     const [category, setCategory] = useState(initialPost?.category || "");
     const [articleType, setArticleType] = useState<"educational" | "sales" | "experience">(initialPost?.articleType || "educational");
+    const [searchIntent, setSearchIntent] = useState<"informational" | "commercial" | "transactional">(initialPost?.searchIntent || "informational");
     const [status, setStatus] = useState<"draft" | "published">(initialPost?.status || "draft");
     const [author] = useState(initialPost?.author || "Isabelle");
 
@@ -132,36 +133,36 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
     };
 
     const handleExportJson = () => {
+        // Base fields visible to ALL article types in the UI
         const baseData: any = {
-            title, slug, excerpt, coverImage, content: editor?.getHTML() || "", category, articleType, status, author, 
+            title, slug, excerpt, coverImage, content: editor?.getHTML() || "", category, articleType, searchIntent, status, author, 
             seoTitle, seoDescription, seoKeywords, focusKeyword, canonicalUrl, ogTitle, ogDescription, ogImage: coverImage, 
             schemaType: articleType === "sales" ? "Product" : articleType === "experience" ? "BlogPosting" : "Article", 
-            schemaMentions: schemaMentionsStr.split(',').map(m => m.trim()).filter(Boolean), 
+            
+            // Blocks tab (visible to all)
+            pros: pros.filter(p => p.trim()), 
+            cons: cons.filter(c => c.trim()),
             faqItems: faqItems.filter(f => f.question.trim() && f.answer.trim()), 
-            contentImages: contentImages.filter(img => img.url.trim())
+            contentImages: contentImages.filter(img => img.url.trim()),
+            verdict: verdict
         };
 
+        // Specific fields based on UI tab rendering conditions
         if (articleType === "sales") {
             baseData.productName = productName;
             baseData.productPrice = productPrice;
             baseData.productRating = productRating;
             baseData.affiliateLink = affiliateLink;
             baseData.affiliateButtonText = affiliateButtonText;
-            baseData.verdict = verdict;
-            baseData.pros = pros.filter(p => p.trim());
-            baseData.cons = cons.filter(c => c.trim());
             baseData.ratingCriteria = ratingCriteria.filter(r => r.label.trim());
         } else if (articleType === "educational") {
-            baseData.pros = pros.filter(p => p.trim());
-            baseData.cons = cons.filter(c => c.trim());
+            baseData.ratingCriteria = ratingCriteria.filter(r => r.label.trim());
         } else if (articleType === "experience") {
             baseData.schemaAboutName = schemaAboutName;
             baseData.schemaAboutUrl = schemaAboutUrl;
+            baseData.schemaMentions = schemaMentionsStr.split(',').map(m => m.trim()).filter(Boolean);
             baseData.ctaLink = ctaLink;
             baseData.ctaText = ctaText;
-            baseData.pros = pros.filter(p => p.trim());
-            baseData.cons = cons.filter(c => c.trim());
-            baseData.verdict = verdict;
         }
 
         const dataStr = JSON.stringify(baseData, null, 2);
@@ -191,6 +192,7 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
                 if (postData.coverImage !== undefined) setCoverImage(postData.coverImage);
                 if (postData.category !== undefined) setCategory(postData.category);
                 if (postData.articleType !== undefined) setArticleType(postData.articleType);
+                if (postData.searchIntent !== undefined) setSearchIntent(postData.searchIntent);
                 if (postData.status !== undefined) setStatus(postData.status);
                 
                 if (postData.seoTitle !== undefined) setSeoTitle(postData.seoTitle);
@@ -249,6 +251,7 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
                 content: editor.getHTML(),
                 category: category || "",
                 articleType,
+                searchIntent,
                 status,
                 author,
                 seoTitle: seoTitle || "",
@@ -911,8 +914,8 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
                                 </div>
                             </div>
 
-                            {/* RATING CRITERIA (for sales) */}
-                            {articleType === "sales" && (
+                            {/* RATING CRITERIA (for sales and educational) */}
+                            {(articleType === "sales" || articleType === "educational") && (
                                 <div className="rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
                                     <h3 className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-1">
                                         <Award size={16} className="text-amber-500" />
@@ -1196,6 +1199,19 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
                             </div>
 
                             <div>
+                                <label className="block text-xs font-medium text-gray-500 mb-1.5">Intenção de Busca (SEO)</label>
+                                <select
+                                    value={searchIntent}
+                                    onChange={(e) => setSearchIntent(e.target.value as any)}
+                                    className="w-full rounded-lg border border-purple-200 bg-purple-50/30 px-3 py-2.5 text-sm focus:border-purple-400 focus:outline-none"
+                                >
+                                    <option value="informational">📖 Informacional</option>
+                                    <option value="commercial">⚖️ Comercial (Comparativo)</option>
+                                    <option value="transactional">🛒 Transacional</option>
+                                </select>
+                            </div>
+
+                            <div>
                                 <label className="block text-xs font-medium text-gray-500 mb-1.5">Categoria</label>
                                 <select
                                     value={category}
@@ -1262,7 +1278,7 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
                                 <span>Imagens</span>
                                 <span className={contentImages.length > 0 ? "text-blue-600 font-medium" : "text-gray-400"}>{contentImages.length} imagem(s)</span>
                             </div>
-                            {articleType === "sales" && (
+                            {(articleType === "sales" || articleType === "educational") && (
                                 <div className="flex justify-between text-gray-600">
                                     <span>Critérios</span>
                                     <span className={ratingCriteria.length > 0 ? "text-amber-600 font-medium" : "text-gray-400"}>{ratingCriteria.length} critério(s)</span>

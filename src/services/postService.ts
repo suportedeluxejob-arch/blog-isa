@@ -37,6 +37,7 @@ export interface BlogPost {
     coverImage: string;
     category: string;
     articleType: "educational" | "sales" | "experience";
+    searchIntent?: "informational" | "commercial" | "transactional";
     status: "draft" | "published";
     author: string;
     authorUrl?: string;

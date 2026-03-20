@@ -186,6 +186,7 @@ function PostsTab({
     const handleExport = (post: any) => {
         const { id, origin, createdAt, updatedAt, publishedAt, ...cleanPost } = post;
         
+        // Base fields visible to ALL article types in the UI
         const exportData: any = {
             title: cleanPost.title || "",
             slug: cleanPost.slug || "",
@@ -194,6 +195,7 @@ function PostsTab({
             content: cleanPost.content || "",
             category: cleanPost.category || "",
             articleType: cleanPost.articleType || "educational",
+            searchIntent: cleanPost.searchIntent || "informational",
             status: cleanPost.status || "draft",
             author: cleanPost.author || "Isabelle",
             seoTitle: cleanPost.seoTitle || "",
@@ -205,32 +207,29 @@ function PostsTab({
             ogDescription: cleanPost.ogDescription || "",
             ogImage: cleanPost.ogImage || "",
             schemaType: cleanPost.schemaType || "Article",
-            schemaMentions: cleanPost.schemaMentions || [],
+            
+            // Blocks tab (visible to all)
+            pros: cleanPost.pros || [],
+            cons: cleanPost.cons || [],
             faqItems: cleanPost.faqItems || [],
-            contentImages: cleanPost.contentImages || []
+            contentImages: cleanPost.contentImages || [],
+            verdict: cleanPost.verdict || ""
         };
 
+        // Specific fields based on UI tab rendering conditions
         if (exportData.articleType === "sales") {
             exportData.productName = cleanPost.productName || "";
             exportData.productPrice = cleanPost.productPrice || "";
             exportData.productRating = cleanPost.productRating || 0;
             exportData.affiliateLink = cleanPost.affiliateLink || "";
             exportData.affiliateButtonText = cleanPost.affiliateButtonText || "";
-            exportData.verdict = cleanPost.verdict || "";
-            exportData.pros = cleanPost.pros || [];
-            exportData.cons = cleanPost.cons || [];
             exportData.ratingCriteria = cleanPost.ratingCriteria || [];
-        } else if (exportData.articleType === "educational") {
-            exportData.pros = cleanPost.pros || [];
-            exportData.cons = cleanPost.cons || [];
         } else if (exportData.articleType === "experience") {
             exportData.schemaAboutName = cleanPost.schemaAboutName || "";
             exportData.schemaAboutUrl = cleanPost.schemaAboutUrl || "";
+            exportData.schemaMentions = cleanPost.schemaMentions || [];
             exportData.ctaLink = cleanPost.ctaLink || "";
             exportData.ctaText = cleanPost.ctaText || "";
-            exportData.pros = cleanPost.pros || [];
-            exportData.cons = cleanPost.cons || [];
-            exportData.verdict = cleanPost.verdict || "";
         }
 
         const dataStr = JSON.stringify(exportData, null, 2);
