@@ -1,0 +1,152 @@
+# Controle de Search Intent e Geração de Títulos (SEO)
+
+## 1. Regra de Ouro
+
+Todo conteúdo DEVE corresponder exatamente à intenção de busca do usuário.
+
+👉 Se não corresponder → não ranqueia
+
+---
+
+## 2. Leitura Obrigatória
+
+Antes de escrever ou atualizar qualquer artigo, você DEVE analisar:
+
+- searchIntent
+- focusKeyword
+
+---
+
+## 3. Tipos de Intenção (OBRIGATÓRIO RESPEITAR)
+
+### 📖 Informational (Topo de Funil)
+
+Objetivo do usuário:
+- aprender
+- entender
+- descobrir
+
+Estratégia:
+- ensinar de forma simples
+- responder dúvidas
+- não focar em venda direta
+
+---
+
+### ⚖️ Commercial (Meio de Funil)
+
+Objetivo do usuário:
+- comparar opções
+- decidir entre alternativas
+
+Estratégia:
+- mostrar prós e contras
+- fazer comparações
+- preparar para decisão
+
+---
+
+### 🛒 Transactional (Fundo de Funil)
+
+Objetivo do usuário:
+- comprar
+- encontrar melhor oferta
+
+Estratégia:
+- focar em decisão
+- mostrar preço, custo-benefício
+- incluir CTA claro
+
+---
+
+## 4. Regra de Títulos (CRÍTICO)
+
+O título DEVE:
+
+- conter a palavra-chave principal
+- refletir a intenção de busca
+- gerar curiosidade
+- ser direto e claro
+
+---
+
+## 5. Estrutura de Título por Intenção
+
+### Informational
+
+Usar:
+- como
+- o que é
+- guia
+- passo a passo
+
+Ex:
+"como economizar na páscoa sem gastar muito"
+
+---
+
+### Commercial
+
+Usar:
+- vale a pena
+- qual o melhor
+- comparação
+- vs
+
+Ex:
+"ovo de pistache vale a pena ou não?"
+
+---
+
+### Transactional
+
+Usar:
+- onde comprar
+- melhor preço
+- desconto
+- comprar
+
+Ex:
+"onde comprar ovo de páscoa barato"
+
+---
+
+## 6. Regra de Alinhamento (CRÍTICO)
+
+Se o conteúdo NÃO estiver alinhado com a intenção:
+
+👉 você DEVE ajustar o conteúdo
+
+---
+
+## 7. Regra de Consistência
+
+- NÃO mudar o searchIntent do artigo
+- adaptar o conteúdo ao intent existente
+
+---
+
+## 8. Regra de CTR (Clique)
+
+O título deve fazer o usuário pensar:
+
+👉 "isso resolve exatamente o que eu quero"
+
+---
+
+## 9. Erros Proibidos
+
+❌ Misturar intenções no mesmo artigo  
+❌ Criar título que promete algo e não entrega  
+❌ Fazer conteúdo informacional com título de venda  
+
+---
+
+## 10. Regra Final (A MAIS IMPORTANTE)
+
+Se o usuário clicar e NÃO encontrar o que esperava:
+
+👉 o conteúdo falhou
+
+
+O título deve refletir a intenção E o formato do conteúdo (ex: comparação → tabela)

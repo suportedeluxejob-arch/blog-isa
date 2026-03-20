@@ -1,0 +1,149 @@
+# Otimização de Front-End, CTR e Leitura Mobile (SEO)
+
+## 1. Regra de Ouro (CTR)
+
+Se o título não gera clique, o artigo não rankeia.
+
+O SEO começa no clique.
+
+---
+
+## 2. Regra do Título (seoTitle / title)
+
+- Máximo: 55 caracteres
+- Palavra-chave deve aparecer no início
+- Gatilho forte nas primeiras palavras
+- Deve gerar curiosidade ou promessa clara
+
+### Estrutura ideal:
+[Keyword] + [Gatilho] + [Benefício ou conflito]
+
+---
+
+### Exemplos:
+
+❌ RUIM:
+"Os Melhores Ovos de Páscoa para Comprar em 2026"
+
+✅ BOM:
+"Ovos de Páscoa 2026: Vale a Pena ou é Cilada?"
+
+✅ BOM:
+"Ovos de Páscoa 2026: Onde Vale a Pena Economizar"
+
+---
+
+## 3. Regra da Meta Description (excerpt / seoDescription)
+
+- Máximo: 140 caracteres
+- Sem enrolação
+- Sem introdução genérica
+- Deve provocar curiosidade + mostrar valor
+
+### Estrutura:
+[Ação] + [Resultado] + [Curiosidade]
+
+---
+
+### Exemplos:
+
+❌ RUIM:
+"Nesse artigo vamos falar sobre ovos de páscoa e analisar várias opções disponíveis no mercado."
+
+❌ RUIM:
+"Análise de custo-benefício baseada em dados econômicos e composição estrutural."
+
+✅ BOM:
+"Comparei o preço por grama dos ovos de páscoa 2026. Alguns custam 3x mais caro — veja quais valem a pena."
+
+---
+
+## 4. Regra de Leitura Mobile (CRÍTICO)
+
+O usuário NÃO lê — ele escaneia.
+
+Se o conteúdo for pesado → abandono imediato.
+
+---
+
+## 5. Estrutura de Texto Obrigatória
+
+- Parágrafos com no máximo 2-3 frases
+- Uma ideia por parágrafo
+- Linhas curtas
+
+---
+
+## 6. Uso de Destaque (STRONG)
+
+Use <strong> apenas para:
+
+- números importantes
+- preços
+- conclusões
+- comparações
+
+❌ Não usar para decoração
+
+---
+
+## 7. Estrutura Visual (OBRIGATÓRIA)
+
+Todo conteúdo DEVE ter:
+
+- Subtítulos a cada 2-3 parágrafos
+- Listas (ul/li) para pontos rápidos
+- Tabelas para comparações (ALTAMENTE recomendado)
+
+---
+
+## 8. Regra do Escaneamento (F-Pattern)
+
+O usuário lê:
+
+- início das linhas
+- palavras destacadas
+- listas
+
+👉 O conteúdo deve funcionar mesmo sem leitura completa
+
+---
+
+## 9. Exemplo de Conteúdo Correto
+
+"Calculei o preço por grama dos ovos de páscoa 2026.  
+<strong>O resultado: alguns custam até 3x mais caro do que o chocolate em barra equivalente.</strong>"
+
+---
+
+## 10. Exemplo de Conteúdo ERRADO
+
+"Após análise detalhada dos relatórios econômicos e da composição estrutural dos produtos disponíveis no mercado, observa-se uma discrepância significativa na relação custo-benefício..."
+
+---
+
+## 11. Regra de Retenção (A MAIS IMPORTANTE)
+
+A cada bloco de texto, o leitor deve pensar:
+
+👉 "isso é útil"
+
+Se parecer difícil → ele sai  
+Se parecer simples → ele continua
+
+---
+
+
+Se houver dados comparativos:
+
+👉 gerar tabela estruturada
+
+Evitar blocos apenas em texto
+
+
+
+## 12. Regra Final
+
+Conteúdo bom não é o mais inteligente.
+
+👉 É o mais fácil de entender e mais rápido de consumir.

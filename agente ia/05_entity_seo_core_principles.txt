@@ -1,0 +1,175 @@
+# Princípios de E-E-A-T, Information Gain e SEO Real
+
+## 1. Regra de Ouro
+
+Conteúdo que não traz informação nova → não rankeia.
+
+Reescrever o que já existe é inútil.
+
+---
+
+## 2. O que o Google Quer
+
+O Google prioriza conteúdo que:
+
+- resolve o problema rápido
+- entrega informação prática
+- mostra algo que outros não mostram
+
+---
+
+## 3. Regra de Information Gain (CRÍTICO)
+
+Todo conteúdo DEVE ter pelo menos 2 desses elementos:
+
+- preço por grama / ml / uso
+- comparação direta com alternativa
+- cálculo de economia ou prejuízo
+- análise de ingredientes reais
+- identificação de ponto fraco
+
+---
+
+### ❌ Conteúdo fraco:
+
+"O chocolate é cremoso e saboroso."
+
+---
+
+### ✅ Conteúdo forte:
+
+"O preço por grama é até 2x maior que a barra equivalente — você paga mais pela embalagem do que pelo chocolate."
+
+---
+
+## 4. Perguntas Obrigatórias no Conteúdo
+
+O artigo PRECISA responder:
+
+- Quanto custa de verdade?
+- Vale a pena ou não?
+- Existe opção melhor?
+- Onde está o ponto fraco?
+
+Se faltar qualquer uma → conteúdo incompleto
+
+---
+
+## 5. Regra Anti-Thin Content
+
+Texto longo não é conteúdo bom.
+
+Thin content é:
+
+- texto sem números
+- sem comparação
+- sem conclusão clara
+- cheio de frases genéricas
+
+---
+
+### Sinais de erro:
+
+- "produto de alta qualidade"
+- "excelente desempenho"
+- "vale muito a pena" (sem explicar)
+
+---
+
+## 6. Regra de Profundidade
+
+Todo conteúdo DEVE:
+
+1. Mostrar o dado
+2. Comparar com alternativa
+3. Dar conclusão prática
+
+---
+
+### Estrutura obrigatória:
+
+- Dado
+- Comparação
+- Decisão
+
+---
+
+## 7. Uso de pros e cons (CONVERSÃO)
+
+NÃO descrever.
+
+Converter em decisão:
+
+❌ RUIM:
+"Produto caro"
+
+✅ BOM:
+"Custa quase o dobro da alternativa equivalente"
+
+---
+
+## 8. FAQ (SEO PESADO)
+
+As perguntas DEVEM ser:
+
+- reais (digitadas no Google)
+- simples
+- focadas em decisão
+
+---
+
+### ❌ ERRADO:
+"Qual o impacto estrutural da composição do produto?"
+
+### ✅ CERTO:
+"Vale a pena comprar?"
+"Qual é o mais barato?"
+
+---
+
+## 9. schemaMentions (ENTIDADES)
+
+Usar apenas entidades reais:
+
+- marcas
+- ingredientes
+- categorias
+
+---
+
+### ✅ CORRETO:
+["Cacau Show", "Kopenhagen", "Pistache", "Manteiga de Cacau"]
+
+### ❌ ERRADO:
+["Custo Logístico", "Inflação Alimentar"]
+
+---
+
+## 10. Regra de Diferenciação
+
+Se o conteúdo puder ser copiado e colado em outro site:
+
+👉 ele está ruim
+
+---
+
+## 11. Regra de Clareza
+
+Se parecer técnico → está errado  
+Se parecer simples → está certo  
+
+---
+
+## 12. Regra de Decisão (A MAIS IMPORTANTE)
+
+O conteúdo deve fazer o leitor pensar:
+
+👉 "já sei se compro ou não"
+
+Se isso não acontecer → falhou
+
+
+Comparações devem ser:
+
+- numéricas
+- visuais (tabela quando possível)

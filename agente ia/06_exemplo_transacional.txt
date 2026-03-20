@@ -1,0 +1,165 @@
+# Modelo Obrigatório: Artigo Transacional (sales)
+
+## 1. Regra de Ouro
+
+Artigo transacional NÃO é review emocional.
+
+É análise de custo-benefício.
+
+O objetivo é responder:
+
+👉 vale a pena comprar ou não?
+
+---
+
+## 2. Proibição Absoluta (CRÍTICO)
+
+❌ NUNCA usar:
+
+- "eu testei"
+- "eu comprei"
+- "chegou aqui em casa"
+- qualquer afirmação de experiência física
+
+---
+
+## 3. Estrutura Obrigatória
+
+Todo artigo "sales" DEVE seguir:
+
+### 1. Introdução
+
+- mostrar o produto
+- contextualizar preço
+- levantar dúvida real
+- indicar que existe ponto positivo e negativo
+
+---
+
+### 2. H2: Vale a pena?
+
+- resposta direta inicial
+- sem enrolação
+
+---
+
+### 3. H2: O que os números mostram
+
+- preço
+- custo por uso / grama / ml
+- comparação com alternativa
+
+👉 OBRIGATÓRIO ter número
+
+---
+
+### 4. H2: Onde está o ponto fraco
+
+- mostrar problema real
+- algo que o fabricante não destaca
+
+---
+
+### 5. H2: Melhor escolha (ou quando compensa)
+
+- explicar quando faz sentido comprar
+
+---
+
+### 6. H2: Veredito final
+
+- decisão clara
+- sem ambiguidade
+
+---
+
+## 4. Regra de Conteúdo
+
+Todo texto DEVE ter:
+
+- pelo menos 2 números reais
+- pelo menos 1 comparação
+- pelo menos 1 conclusão prática
+
+---
+
+## 5. Regra de Escrita
+
+- frases curtas
+- linguagem simples
+- sem jargão técnico
+
+---
+
+## 6. Exemplo de Escrita Correta
+
+❌ ERRADO:
+"produto muito bom e eficiente"
+
+✅ CERTO:
+"O refil custa R$ 25 — quase 60% do valor do kit completo"
+
+---
+
+## 7. Links Internos (OBRIGATÓRIO)
+
+- mínimo 1 link
+- máximo 3 links
+
+- âncora deve ser natural e específica
+
+---
+
+## 8. pros e cons (DECISÃO)
+
+DEVEM ser:
+
+- diretos
+- com números ou impacto real
+
+---
+
+## 9. FAQ (SEO)
+
+- mínimo 3 perguntas
+- máximo 6
+
+- perguntas reais
+
+---
+
+## 10. schemaMentions
+
+Incluir:
+
+- marca
+- tipo de produto
+- material
+
+---
+
+## 11. Regra Anti-Conteúdo Fraco
+
+Se o conteúdo não tiver:
+
+- número
+- comparação
+- decisão
+
+👉 ele está errado
+
+---
+
+## 12. Regra Final (A MAIS IMPORTANTE)
+
+O leitor deve terminar o artigo pensando:
+
+👉 "vale a pena"  
+ou  
+👉 "não vale a pena"
+
+Se houver dúvida → o conteúdo falhou
+
+Sempre que houver comparação de preço:
+
+👉 gerar tabela

@@ -1,0 +1,171 @@
+# Estruturação de Clusters e Links Internos (SEO REAL)
+
+## 1. Regra de Ouro do SEO
+
+O Google não rankeia páginas isoladas.
+
+👉 Ele rankeia AUTORIDADE DE TEMA.
+
+Se o site fala muito sobre o mesmo assunto → ele sobe
+Se mistura temas → ele perde força
+
+---
+
+## 2. Clusters Permitidos (Escopo do Site)
+
+O site deve focar APENAS nesses 3 pilares:
+
+### 1. Utilidades Domésticas
+- Produtos que economizam tempo ou dinheiro
+- Ex: mop, organizador, airfryer, utensílios
+
+### 2. Beleza e Autocuidado
+- Produtos analisados por custo-benefício
+- Ex: shampoo, secador, skincare
+
+### 3. Sazonalidade Financeira
+- Compras estratégicas em datas
+- Ex: Páscoa, Black Friday, Natal
+
+---
+
+## 3. Conteúdo PROIBIDO
+
+- Tecnologia corporativa
+- Automóveis
+- Investimentos financeiros
+- Assuntos fora do dia a dia da mulher comum
+
+👉 Isso destrói o SEO do site
+
+---
+
+## 4. Estrutura Hub and Spoke (CRÍTICO)
+
+Todo conteúdo deve seguir essa lógica:
+
+### HUB (educational)
+- Atrai tráfego do Google
+- Ex: "ovos de páscoa 2026 vale a pena?"
+
+### SPOKES (sales)
+- Converte tráfego
+- Ex:
+  - "ovo de pistache cacau show vale a pena"
+  - "melhor chocolate para fazer ovo em casa"
+
+👉 Sem links → tráfego desperdiçado
+
+---
+
+## 5. Regra de Linkagem Interna (OBRIGATÓRIO)
+
+Todo artigo DEVE ter:
+
+- mínimo 2 links internos
+- máximo 5 links internos
+
+---
+
+## 6. Qualidade do Texto Âncora (CRÍTICO)
+
+O texto clicável PRECISA:
+
+- ser natural
+- conter palavra-chave
+- descrever exatamente o conteúdo
+
+---
+
+### ❌ PROIBIDO:
+
+- "clique aqui"
+- "veja mais"
+- "saiba mais"
+- textos genéricos
+
+---
+
+### ✅ CORRETO:
+
+- "análise completa do ovo de pistache da Cacau Show"
+- "guia para fazer ovo de páscoa barato em casa"
+- "quanto rende o mop giratório no dia a dia"
+
+---
+
+## 7. Regra de Posicionamento do Link
+
+O link deve aparecer:
+
+- no meio do conteúdo (NUNCA no início)
+- após explicar o problema
+- no momento de decisão
+
+---
+
+## 8. Regra de Intenção do Link
+
+O link deve resolver uma dúvida real do leitor.
+
+Pergunta obrigatória:
+
+👉 "isso aqui ajuda o leitor a decidir o próximo passo?"
+
+Se NÃO → não colocar link
+
+---
+
+## 9. Estratégia de Crescimento (ESCALA)
+
+Para cada artigo HUB criado, devem existir pelo menos:
+
+- 2 a 4 artigos SPOKE
+
+---
+
+### Exemplo:
+
+HUB:
+"ovos de páscoa 2026 vale a pena"
+
+SPOKES:
+- ovo cacau show vale a pena
+- como fazer ovo em casa barato
+- melhor chocolate para derreter
+
+---
+
+## 10. Regra de Autoridade
+
+Quanto mais conteúdo conectado sobre o mesmo tema:
+
+👉 mais o Google confia no site
+
+---
+
+## 11. Regra de CTR Interno
+
+O link precisa dar vontade de clicar.
+
+Use:
+
+- curiosidade leve
+- promessa clara
+- benefício
+
+---
+
+### Exemplo:
+
+"Se você quer ver qual realmente compensa, eu detalhei isso na minha análise do ovo de pistache da Cacau Show — inclusive o ponto que quase ninguém percebe."
+
+---
+
+## 12. Regra Final (A MAIS IMPORTANTE)
+
+Sem link interno → sem crescimento
+
+Sem cluster → sem autoridade
+
+Sem autoridade → sem ranking

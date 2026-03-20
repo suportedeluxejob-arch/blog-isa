@@ -1,0 +1,163 @@
+# Modelo Obrigatório: Artigo Educacional (educational)
+
+## 1. Regra de Ouro
+
+Artigo educacional NÃO é dica genérica.
+
+É conteúdo que resolve um problema real com lógica simples.
+
+---
+
+## 2. Objetivo do Conteúdo
+
+Atrair tráfego do Google e preparar o leitor para uma decisão.
+
+---
+
+## 3. Estrutura Obrigatória
+
+Todo artigo "educational" DEVE seguir:
+
+---
+
+### 1. Introdução (DADO IMEDIATO)
+
+- mostrar problema real
+- trazer número logo no início
+- evitar enrolação
+
+---
+
+### 2. H2: Vale a pena ou funciona?
+
+- resposta direta
+- sem rodeio
+
+---
+
+### 3. H2: Como funciona na prática
+
+- explicar método simples
+- usar lista (OBRIGATÓRIO)
+
+---
+
+### 4. H2: Onde está o gargalo
+
+- mostrar dificuldade real
+- onde as pessoas erram
+
+---
+
+### 5. H2: Melhor forma de aplicar
+
+- dar solução prática
+- facilitar execução
+
+---
+
+### 6. H2: Veredito final
+
+- resumo claro
+- decisão simples
+
+---
+
+## 4. Regra de Conteúdo
+
+Todo artigo DEVE ter:
+
+- pelo menos 1 cálculo simples (tempo, dinheiro ou esforço)
+- pelo menos 1 comparação (antes vs depois)
+- pelo menos 1 insight prático
+
+---
+
+## 5. Regra de Escrita
+
+- linguagem simples
+- frases curtas
+- sem jargão técnico
+
+---
+
+## 6. Regra Anti-Conteúdo Fraco
+
+❌ NÃO pode ter:
+
+- frases genéricas
+- dicas vagas
+- conteúdo que serve para qualquer blog
+
+---
+
+### ❌ ERRADO:
+"Use um pano melhor para limpar"
+
+### ✅ CERTO:
+"Com rodo comum, o chão leva cerca de 20 minutos. Com mop, cai para 10 minutos — metade do tempo."
+
+---
+
+## 7. Links Internos (CRÍTICO)
+
+- mínimo 1 link
+- máximo 3
+
+- deve levar para artigo transacional (sales)
+
+---
+
+## 8. Regra de Transição (SEO + CONVERSÃO)
+
+O conteúdo educacional DEVE preparar o leitor para clicar no link interno.
+
+---
+
+## 9. FAQ (SEO)
+
+- mínimo 3 perguntas
+- máximo 6
+
+- perguntas reais
+- respostas diretas (máximo 3-4 frases)
+
+---
+
+## 10. schemaMentions
+
+Incluir:
+
+- categoria
+- tipo de atividade
+- contexto
+
+---
+
+## 11. Regra de Retenção
+
+Cada bloco deve fazer o leitor pensar:
+
+👉 "isso facilita minha vida"
+
+---
+
+## 12. Regra de Clareza
+
+Se parecer complicado → está errado  
+Se parecer óbvio → está certo  
+
+---
+
+## 13. Regra Final (A MAIS IMPORTANTE)
+
+O leitor deve terminar pensando:
+
+👉 "vou fazer isso hoje"
+
+Se não gerar ação → falhou
+
+
+Se houver múltiplas opções:
+
+👉 incluir tabela comparativa

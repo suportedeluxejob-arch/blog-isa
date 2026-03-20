@@ -1,0 +1,192 @@
+# Arquitetura de Dados JSON e Regras de SEO (Firestore)
+
+## 1. Regra de Saída (CRÍTICO)
+
+Seu único output deve ser um JSON válido.
+
+- ❌ Sem texto antes ou depois
+- ❌ Sem markdown (```json)
+- ❌ Sem explicações
+- ❌ Sem comentários
+
+JSON inválido quebra o sistema (JSON.parse).
+
+---
+
+## 2. Mapa de Propriedades
+
+### 🔒 Chaves de Identidade (NUNCA alterar)
+
+- "id" → manter exatamente igual
+- "slug" → NÃO alterar (evita 404 e perda de SEO)
+- "createdAt" / "updatedAt" → manter formato original (timestamp)
+- "author" → sempre "Isabelle"
+- "coverImage" → nunca alterar
+
+---
+
+### 🧠 Chaves de Conteúdo (FOCO EM SEO)
+
+- "title" → até 55 caracteres (claro + direto + keyword)
+- "content" → HTML válido com estrutura obrigatória (ver seção 5)
+- "excerpt" → até 140 caracteres (gatilho de clique)
+- "category" → Categoria nichada (NUNCA use "Reviews Sinceros")
+- "articleType" → "sales", "educational" ou "experience"
+- "searchIntent" → "informational", "commercial" ou "transactional"
+- "status" → "published" ou "draft"
+
+---
+
+### 🚀 Chaves de SEO (CRÍTICO)
+
+- "seoTitle" → até 55 caracteres (foco em clique + keyword)
+- "seoDescription" → CTA + variação do excerpt
+- "focusKeyword" → palavra-chave principal EXATA
+- "seoKeywords" → palavras secundárias separadas por vírgula
+- "canonicalUrl" → obrigatório
+
+Formato:
+"https://www.achadosvipdaisa.com.br/achados/[slug]"
+ou
+"https://www.achadosvipdaisa.com.br/experiencias/[slug]"
+
+- "schemaType" → usar "Article" na maioria dos casos
+- "schemaMentions" → entidades reais (marcas, ingredientes, categorias)
+
+---
+
+## 3. Regra de Canonical URL
+
+OBRIGATÓRIO em todos os artigos.
+
+Se faltar → risco de conteúdo duplicado + perda de ranking
+
+---
+
+## 4. Links Internos (SEO de Cluster)
+
+- Sempre usar:
+  /achados/ ou /experiencias/
+
+- ❌ Nunca usar /reviews/
+
+Links internos são obrigatórios para:
+- aumentar tempo de sessão
+- fortalecer SEO
+
+---
+
+## 5. Estrutura Obrigatória do "content" (SEO REAL)
+
+Todo artigo DEVE seguir essa estrutura:
+
+### Introdução
+- Dor real do usuário
+- Contexto direto
+
+### H2: Vale a pena?
+- Resposta inicial clara
+
+### H2: Comparação
+- Ex: supermercado vs premium vs caseiro
+- Deve conter lista ou tabela
+
+### H2: Melhor escolha
+- Indicação prática
+
+### H2: Veredito final
+- Decisão direta
+
+---
+
+## 6. Elementos Obrigatórios no Content
+
+- ✅ Pelo menos 1 lista (ul/li)
+- ✅ Pelo menos 1 tabela comparativa (ALTAMENTE RECOMENDADO)
+- ✅ Frases curtas
+- ✅ Linguagem simples
+- ✅ Uso natural da keyword
+
+---
+
+## 7. Regra de Intenção de Busca (CRÍTICO PRA RANKING)
+
+O conteúdo DEVE responder:
+
+- Isso vale a pena?
+- É caro ou barato?
+- Existe opção melhor?
+- Qual escolher?
+
+Se não responder → NÃO RANQUEIA
+
+---
+
+## 8. FAQ (People Also Ask)
+
+- Mínimo: 5 perguntas
+- Máximo: 8 perguntas
+
+Perguntas devem ser:
+- reais (busca do usuário)
+- simples
+- focadas em decisão
+
+Exemplos:
+- vale a pena?
+- qual o melhor?
+- qual mais barato?
+
+---
+
+## 9. Pros e Cons
+
+- Diretos
+- Sem linguagem técnica
+- Focados em decisão
+
+---
+
+## 10. Verdict (OBRIGATÓRIO)
+
+- Claro
+- Direto
+- Sem dúvida
+
+Exemplo:
+"Não vale a pena para economia. Só compensa como presente."
+
+---
+
+## 11. Regra de Qualidade (ANTI-CONTEÚDO FRACO)
+
+O conteúdo NÃO pode ser:
+
+- raso
+- genérico
+- curto demais
+
+O conteúdo DEVE:
+
+- comparar
+- explicar
+- concluir
+---
+
+"comparisonTable": [
+  {
+    "label": "Nome da opção (Ex: Supermercado)",
+    "peso": "Opcional (Ex: 250g)",
+    "preco": "Opcional (Ex: R$ 60)",
+    "precoKg": "Opcional (Ex: R$ 240/kg)"
+  }
+],
+🚨 (CRÍTICO: Use ESTRITAMENTE as chaves minúsculas "label", "peso", "preco", "precoKg" no array de comparação. NUNCA invente, traduza ou renomeie essas chaves. Elas quebram o parser do React se alteradas).
+
+"searchIntent": "",
+
+## 12. Regra Final (A MAIS IMPORTANTE)
+
+Se o conteúdo não ajudar o usuário a decidir:
+
+👉 ele está errado

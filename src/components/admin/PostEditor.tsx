@@ -22,8 +22,15 @@ interface PostEditorProps {
     onSave: (post: Omit<BlogPost, "id" | "createdAt" | "updatedAt">) => Promise<void>;
 }
 
+const cleanInternalLinks = (html: string) => {
+    return html
+        .replace(/\[https?:\/\/(.*?)\]\((https?:\/\/.*?)\)/g, '$2')
+        .replace(/https:\s+\/\//g, 'https://');
+};
+
 const cleanContent = (html: string) => {
-    return html.replace(/\[cite:.*?\]/g, '').replace(/\[cite_start\]/g, '');
+    let cleaned = html.replace(/\[cite:.*?\]/g, '').replace(/\[cite_start\]/g, '');
+    return cleanInternalLinks(cleaned);
 };
 
 const cleanUrl = (url: string) => {
@@ -204,7 +211,7 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
                 if (postData.title !== undefined) setTitle(postData.title);
                 if (postData.slug !== undefined) setSlug(postData.slug);
                 if (postData.excerpt !== undefined) setExcerpt(postData.excerpt);
-                if (postData.coverImage !== undefined) setCoverImage(postData.coverImage);
+                if (postData.coverImage !== undefined) setCoverImage(cleanUrl(postData.coverImage));
                 if (postData.category !== undefined) setCategory(postData.category);
                 if (postData.articleType !== undefined) setArticleType(postData.articleType);
                 if (postData.searchIntent !== undefined) setSearchIntent(postData.searchIntent);
@@ -214,20 +221,20 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
                 if (postData.seoDescription !== undefined) setSeoDescription(postData.seoDescription);
                 if (postData.seoKeywords !== undefined) setSeoKeywords(postData.seoKeywords);
                 if (postData.focusKeyword !== undefined) setFocusKeyword(postData.focusKeyword);
-                if (postData.canonicalUrl !== undefined) setCanonicalUrl(postData.canonicalUrl);
+                if (postData.canonicalUrl !== undefined) setCanonicalUrl(cleanUrl(postData.canonicalUrl));
                 if (postData.ogTitle !== undefined) setOgTitle(postData.ogTitle);
                 if (postData.ogDescription !== undefined) setOgDescription(postData.ogDescription);
                 
                 if (postData.schemaAboutName !== undefined) setSchemaAboutName(postData.schemaAboutName);
                 if (postData.schemaAboutUrl !== undefined) setSchemaAboutUrl(postData.schemaAboutUrl);
                 if (postData.schemaMentions !== undefined) setSchemaMentionsStr(Array.isArray(postData.schemaMentions) ? postData.schemaMentions.join(', ') : postData.schemaMentions || "");
-                if (postData.ctaLink !== undefined) setCtaLink(postData.ctaLink);
+                if (postData.ctaLink !== undefined) setCtaLink(cleanUrl(postData.ctaLink));
                 if (postData.ctaText !== undefined) setCtaText(postData.ctaText);
                 
                 if (postData.productName !== undefined) setProductName(postData.productName);
                 if (postData.productPrice !== undefined) setProductPrice(postData.productPrice);
                 if (postData.productRating !== undefined) setProductRating(postData.productRating);
-                if (postData.affiliateLink !== undefined) setAffiliateLink(postData.affiliateLink);
+                if (postData.affiliateLink !== undefined) setAffiliateLink(cleanUrl(postData.affiliateLink));
                 if (postData.affiliateButtonText !== undefined) setAffiliateButtonText(postData.affiliateButtonText);
                 if (postData.verdict !== undefined) setVerdict(postData.verdict);
                 

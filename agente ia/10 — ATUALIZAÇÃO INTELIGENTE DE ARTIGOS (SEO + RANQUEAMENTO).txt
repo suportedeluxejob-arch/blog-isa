@@ -1,0 +1,147 @@
+# Atualização Inteligente de Artigos (SEO + Consistência)
+
+## 1. Regra de Ouro
+
+Ao receber um JSON existente, você NÃO está criando um artigo novo.
+
+👉 Você está OTIMIZANDO para ranquear melhor no Google.
+
+---
+
+## 2. O que NUNCA pode ser alterado
+
+- id
+- slug
+- createdAt
+- coverImage
+- author
+- articleType
+- searchIntent
+
+---
+
+## 3. O que DEVE ser melhorado
+
+- title (mais CTR, respeitando searchIntent)
+- seoTitle (mais clique)
+- seoDescription (mais curiosidade)
+- content (mais profundo, claro e útil)
+- excerpt (mais direto e chamativo)
+- pros (mais objetivos)
+- cons (mais reais)
+- faqItems (mais próximos da busca real)
+- verdict (mais direto e decisivo)
+
+---
+
+## 4. Leitura Obrigatória Antes de Atualizar
+
+Você DEVE analisar:
+
+- articleType
+- searchIntent
+- focusKeyword
+
+---
+
+## 5. Regra por Tipo de Artigo
+
+### 📚 educational
+
+- melhorar explicação
+- adicionar exemplo prático
+- incluir cálculo simples
+- reforçar clareza
+- inserir link para artigo de venda
+
+---
+
+### 💰 sales
+
+- aumentar comparação
+- adicionar números (preço, custo, economia)
+- reforçar decisão de compra
+- melhorar CTA
+- destacar ponto fraco
+
+---
+
+### ✍️ experience
+
+- reforçar aprendizado
+- incluir comparação implícita
+- conectar com solução
+- inserir link para artigo transacional
+
+---
+
+## 6. Information Gain (OBRIGATÓRIO)
+
+Se o conteúdo NÃO tiver:
+
+- números
+- comparação
+- cálculo simples
+
+👉 você DEVE adicionar
+
+---
+
+## 7. Estrutura SEO (OBRIGATÓRIO)
+
+Garantir que o conteúdo tenha:
+
+- mínimo 3 H2
+- listas quando necessário
+- tabela APENAS quando houver comparação real
+
+---
+
+## 8. Interlink (CRÍTICO)
+
+Garantir:
+
+- mínimo 2 links internos
+- pelo menos 1 direcionando para artigo de venda
+
+---
+
+## 9. Regra de Clareza
+
+- simplificar frases
+- remover enrolação
+- melhorar escaneabilidade
+
+---
+
+## 10. Regra de Evolução
+
+O artigo atualizado DEVE ser:
+
+- mais útil
+- mais claro
+- mais completo
+- mais focado na intenção
+
+---
+
+## 11. Regra Anti-Repetição
+
+Evitar:
+
+- repetir frases do conteúdo original
+- manter blocos iguais
+- copiar estrutura sem melhorar
+
+---
+
+## 12. Regra Final (A MAIS IMPORTANTE)
+
+Se o artigo atualizado não estiver claramente melhor que o original:
+
+👉 a atualização falhou
+
+
+Se identificar comparação em texto:
+
+👉 converter para tabela

@@ -1,0 +1,133 @@
+# Modelo Obrigatório: Artigo Experience (Relato Estratégico)
+
+## 1. Regra de Ouro
+
+Artigo de experiência NÃO é diário pessoal.
+
+👉 É um conteúdo estratégico que transforma uma situação real em aprendizado prático para o leitor.
+
+---
+
+## 2. Objetivo do Conteúdo
+
+- gerar identificação
+- mostrar um erro, dúvida ou descoberta real
+- ensinar algo útil
+- levar o leitor para uma decisão
+
+---
+
+## 3. Estrutura Obrigatória
+
+### 1. Introdução
+
+- apresentar situação comum do dia a dia
+- mostrar um problema ou dúvida real
+- gerar curiosidade
+
+---
+
+### 2. H2: O que aconteceu na prática
+
+- explicar o cenário de forma simples
+- mostrar o contexto da situação
+- levantar o conflito ou dúvida
+
+---
+
+### 3. H2: Onde está o problema
+
+- identificar o erro ou ponto fraco
+- mostrar algo que normalmente passa despercebido
+
+---
+
+### 4. H2: O que mudou depois
+
+- apresentar aprendizado
+- incluir comparação implícita (antes vs depois)
+
+---
+
+### 5. H2: Melhor solução (ou o que realmente funciona)
+
+- indicar solução prática
+- conectar com decisão
+
+---
+
+### 6. H2: Veredito final
+
+- conclusão clara
+- recomendação direta
+
+---
+
+## 4. Regra de Conteúdo
+
+O artigo DEVE ter:
+
+- pelo menos 1 aprendizado prático
+- pelo menos 1 comparação implícita
+- pelo menos 1 insight útil
+
+---
+
+## 5. Regra de Conversão (CRÍTICO)
+
+O conteúdo DEVE levar para:
+
+👉 um artigo transacional (sales)
+
+- usar link interno natural
+- inserir no momento de decisão
+
+---
+
+## 6. Regra de Escrita
+
+- linguagem simples
+- tom natural
+- sem exagero emocional
+- sem parecer roteiro de influencer
+
+---
+
+## 7. Proibição Absoluta
+
+❌ NÃO transformar em:
+- história longa sem objetivo  
+- texto genérico  
+- relato sem conclusão  
+
+---
+
+## 8. Regra de Valor
+
+Cada parte do conteúdo deve fazer o leitor pensar:
+
+👉 "isso já aconteceu comigo"
+👉 "eu não tinha pensado nisso"
+👉 "agora faz sentido"
+
+---
+
+## 9. Integração com SEO
+
+- usar pelo menos 2 subtítulos (H2)
+- manter escaneabilidade
+- inserir pelo menos 1 link interno
+
+---
+
+## 10. Regra Final (A MAIS IMPORTANTE)
+
+O leitor deve terminar o artigo pensando:
+
+👉 "isso me ajudou"
+👉 "agora sei o que fazer"
+
+Se não gerar isso → o conteúdo falhou
+
+
+Não usar tabela a menos que haja comparação clara
