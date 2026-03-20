@@ -196,7 +196,7 @@ function PostsTab({
         URL.revokeObjectURL(url);
     };
 
-    const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleImport = async (e: React.ChangeEvent<HTMLInputElement>, targetId?: string) => {
         const file = e.target.files?.[0];
         if (!file) return;
 
@@ -206,7 +206,8 @@ function PostsTab({
                 const jsonStr = event.target?.result as string;
                 const postData = JSON.parse(jsonStr);
                 
-                const { id, ...dataToSave } = postData;
+                const { id: jsonId, ...dataToSave } = postData;
+                const finalId = targetId || jsonId;
                 
                 // Convert timestamps back if they exist in JSON but are just objects
                 const { Timestamp } = await import("firebase/firestore");
@@ -226,10 +227,10 @@ function PostsTab({
                 const { updatePost, createPost, getPostById } = await import("@/services/postService");
                 
                 let successMsg = "Artigo criado com sucesso!";
-                if (id) {
-                    const existingPost = await getPostById(id);
+                if (finalId) {
+                    const existingPost = await getPostById(finalId);
                     if (existingPost) {
-                        await updatePost(id, dataToSave);
+                        await updatePost(finalId, dataToSave);
                         successMsg = "Artigo atualizado com sucesso!";
                     } else {
                         await createPost(dataToSave);
@@ -297,7 +298,7 @@ function PostsTab({
                     <input 
                         type="file" 
                         accept=".json" 
-                        onChange={handleImport} 
+                        onChange={(e) => handleImport(e)} 
                         className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                         title="Importar JSON de Artigo"
                     />
@@ -375,6 +376,17 @@ function PostsTab({
 
                             {/* Actions */}
                             <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <div className="relative inline-block" title="Importar/Atualizar JSON">
+                                    <input 
+                                        type="file" 
+                                        accept=".json" 
+                                        onChange={(e) => handleImport(e, post.id)} 
+                                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                    />
+                                    <button className="rounded-lg p-2 text-emerald-400 hover:bg-emerald-50 hover:text-emerald-600 pointer-events-none">
+                                        <Upload size={18} />
+                                    </button>
+                                </div>
                                 <button
                                     onClick={() => handleExport(post)}
                                     className="rounded-lg p-2 text-indigo-400 hover:bg-indigo-50 hover:text-indigo-600"
