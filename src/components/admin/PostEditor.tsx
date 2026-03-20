@@ -132,18 +132,39 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
     };
 
     const handleExportJson = () => {
-        const postData = {
+        const baseData: any = {
             title, slug, excerpt, coverImage, content: editor?.getHTML() || "", category, articleType, status, author, 
             seoTitle, seoDescription, seoKeywords, focusKeyword, canonicalUrl, ogTitle, ogDescription, ogImage: coverImage, 
             schemaType: articleType === "sales" ? "Product" : articleType === "experience" ? "BlogPosting" : "Article", 
-            schemaAboutName, schemaAboutUrl, schemaMentions: schemaMentionsStr.split(',').map(m => m.trim()).filter(Boolean), 
-            ctaLink, ctaText, productName, productPrice, productRating, affiliateLink, affiliateButtonText, verdict, 
-            pros: pros.filter(p => p.trim()), cons: cons.filter(c => c.trim()), 
+            schemaMentions: schemaMentionsStr.split(',').map(m => m.trim()).filter(Boolean), 
             faqItems: faqItems.filter(f => f.question.trim() && f.answer.trim()), 
-            contentImages: contentImages.filter(img => img.url.trim()), 
-            ratingCriteria: ratingCriteria.filter(r => r.label.trim())
+            contentImages: contentImages.filter(img => img.url.trim())
         };
-        const dataStr = JSON.stringify(postData, null, 2);
+
+        if (articleType === "sales") {
+            baseData.productName = productName;
+            baseData.productPrice = productPrice;
+            baseData.productRating = productRating;
+            baseData.affiliateLink = affiliateLink;
+            baseData.affiliateButtonText = affiliateButtonText;
+            baseData.verdict = verdict;
+            baseData.pros = pros.filter(p => p.trim());
+            baseData.cons = cons.filter(c => c.trim());
+            baseData.ratingCriteria = ratingCriteria.filter(r => r.label.trim());
+        } else if (articleType === "educational") {
+            baseData.pros = pros.filter(p => p.trim());
+            baseData.cons = cons.filter(c => c.trim());
+        } else if (articleType === "experience") {
+            baseData.schemaAboutName = schemaAboutName;
+            baseData.schemaAboutUrl = schemaAboutUrl;
+            baseData.ctaLink = ctaLink;
+            baseData.ctaText = ctaText;
+            baseData.pros = pros.filter(p => p.trim());
+            baseData.cons = cons.filter(c => c.trim());
+            baseData.verdict = verdict;
+        }
+
+        const dataStr = JSON.stringify(baseData, null, 2);
         const dataBlob = new Blob([dataStr], { type: 'application/json' });
         const url = URL.createObjectURL(dataBlob);
         const link = document.createElement('a');

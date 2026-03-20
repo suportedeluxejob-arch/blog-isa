@@ -184,7 +184,56 @@ function PostsTab({
     onRefresh: () => void;
 }) {
     const handleExport = (post: any) => {
-        const dataStr = JSON.stringify(post, null, 2);
+        const { id, origin, createdAt, updatedAt, publishedAt, ...cleanPost } = post;
+        
+        const exportData: any = {
+            title: cleanPost.title || "",
+            slug: cleanPost.slug || "",
+            excerpt: cleanPost.excerpt || "",
+            coverImage: cleanPost.coverImage || "",
+            content: cleanPost.content || "",
+            category: cleanPost.category || "",
+            articleType: cleanPost.articleType || "educational",
+            status: cleanPost.status || "draft",
+            author: cleanPost.author || "Isabelle",
+            seoTitle: cleanPost.seoTitle || "",
+            seoDescription: cleanPost.seoDescription || "",
+            seoKeywords: cleanPost.seoKeywords || "",
+            focusKeyword: cleanPost.focusKeyword || "",
+            canonicalUrl: cleanPost.canonicalUrl || "",
+            ogTitle: cleanPost.ogTitle || "",
+            ogDescription: cleanPost.ogDescription || "",
+            ogImage: cleanPost.ogImage || "",
+            schemaType: cleanPost.schemaType || "Article",
+            schemaMentions: cleanPost.schemaMentions || [],
+            faqItems: cleanPost.faqItems || [],
+            contentImages: cleanPost.contentImages || []
+        };
+
+        if (exportData.articleType === "sales") {
+            exportData.productName = cleanPost.productName || "";
+            exportData.productPrice = cleanPost.productPrice || "";
+            exportData.productRating = cleanPost.productRating || 0;
+            exportData.affiliateLink = cleanPost.affiliateLink || "";
+            exportData.affiliateButtonText = cleanPost.affiliateButtonText || "";
+            exportData.verdict = cleanPost.verdict || "";
+            exportData.pros = cleanPost.pros || [];
+            exportData.cons = cleanPost.cons || [];
+            exportData.ratingCriteria = cleanPost.ratingCriteria || [];
+        } else if (exportData.articleType === "educational") {
+            exportData.pros = cleanPost.pros || [];
+            exportData.cons = cleanPost.cons || [];
+        } else if (exportData.articleType === "experience") {
+            exportData.schemaAboutName = cleanPost.schemaAboutName || "";
+            exportData.schemaAboutUrl = cleanPost.schemaAboutUrl || "";
+            exportData.ctaLink = cleanPost.ctaLink || "";
+            exportData.ctaText = cleanPost.ctaText || "";
+            exportData.pros = cleanPost.pros || [];
+            exportData.cons = cleanPost.cons || [];
+            exportData.verdict = cleanPost.verdict || "";
+        }
+
+        const dataStr = JSON.stringify(exportData, null, 2);
         const dataBlob = new Blob([dataStr], { type: 'application/json' });
         const url = URL.createObjectURL(dataBlob);
         const link = document.createElement('a');
