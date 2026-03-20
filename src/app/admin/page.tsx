@@ -6,7 +6,7 @@ import Link from "next/link";
 import {
     PlusCircle, Edit, Trash2, LogOut, LayoutDashboard,
     FileText, FolderOpen, Search, Eye, GripVertical,
-    BookOpen, ShoppingBag, Globe, TrendingUp, AlertTriangle, Database
+    BookOpen, ShoppingBag, Globe, TrendingUp, AlertTriangle, Database, Download, Upload
 } from "lucide-react";
 import { auth } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
@@ -141,6 +141,7 @@ export default function AdminDashboard() {
                     filterStatus={filterStatus}
                     setFilterStatus={setFilterStatus}
                     onDelete={handleDelete}
+                    onRefresh={fetchData}
                 />
             ) : (
                 <CategoriesTab categories={categories} onRefresh={fetchData} />
@@ -180,7 +181,75 @@ function PostsTab({
     filterStatus: "all" | "draft" | "published";
     setFilterStatus: (v: "all" | "draft" | "published") => void;
     onDelete: (id: string) => void;
+    onRefresh: () => void;
 }) {
+    const handleExport = (post: any) => {
+        const dataStr = JSON.stringify(post, null, 2);
+        const dataBlob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(dataBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `artigo-${post.slug || 'export'}.json`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    };
+
+    const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = async (event) => {
+            try {
+                const jsonStr = event.target?.result as string;
+                const postData = JSON.parse(jsonStr);
+                
+                const { id, ...dataToSave } = postData;
+                
+                // Convert timestamps back if they exist in JSON but are just objects
+                const { Timestamp } = await import("firebase/firestore");
+                if (dataToSave.createdAt && dataToSave.createdAt.seconds) {
+                    dataToSave.createdAt = new Timestamp(dataToSave.createdAt.seconds, dataToSave.createdAt.nanoseconds || 0);
+                } else {
+                    dataToSave.createdAt = Timestamp.now();
+                }
+                
+                dataToSave.updatedAt = Timestamp.now();
+                
+                if (dataToSave.publishedAt && dataToSave.publishedAt.seconds) {
+                    dataToSave.publishedAt = new Timestamp(dataToSave.publishedAt.seconds, dataToSave.publishedAt.nanoseconds || 0);
+                }
+                if (dataToSave.origin) delete dataToSave.origin; // Remove display field
+
+                const { updatePost, createPost, getPostById } = await import("@/services/postService");
+                
+                let successMsg = "Artigo criado com sucesso!";
+                if (id) {
+                    const existingPost = await getPostById(id);
+                    if (existingPost) {
+                        await updatePost(id, dataToSave);
+                        successMsg = "Artigo atualizado com sucesso!";
+                    } else {
+                        await createPost(dataToSave);
+                    }
+                } else {
+                    await createPost(dataToSave);
+                }
+                
+                alert(successMsg);
+                onRefresh();
+            } catch (error) {
+                console.error("Erro ao importar JSON:", error);
+                alert("Erro ao ler o arquivo JSON. Certifique-se de que é o formato correto.");
+            }
+        };
+        reader.readAsText(file);
+        // Reset input so the same file could be selected again if needed
+        e.target.value = '';
+    };
+
     return (
         <div>
             {/* Toolbar */}
@@ -224,6 +293,19 @@ function PostsTab({
                     <PlusCircle size={18} />
                     Novo Artigo
                 </Link>
+                <div className="relative">
+                    <input 
+                        type="file" 
+                        accept=".json" 
+                        onChange={handleImport} 
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                        title="Importar JSON de Artigo"
+                    />
+                    <button className="flex items-center gap-2 rounded-lg border border-pink-200 bg-pink-50 px-5 py-2.5 text-sm font-semibold text-pink-700 hover:bg-pink-100 transition-colors pointer-events-none">
+                        <Upload size={18} />
+                        Importar JSON
+                    </button>
+                </div>
             </div>
 
             {/* Posts List */}
@@ -293,6 +375,13 @@ function PostsTab({
 
                             {/* Actions */}
                             <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button
+                                    onClick={() => handleExport(post)}
+                                    className="rounded-lg p-2 text-indigo-400 hover:bg-indigo-50 hover:text-indigo-600"
+                                    title="Exportar Dados (JSON)"
+                                >
+                                    <Download size={18} />
+                                </button>
                                 <Link
                                     href={`/reviews/${post.slug}`}
                                     target="_blank"
