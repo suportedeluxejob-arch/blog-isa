@@ -265,7 +265,7 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
         if (!slug.trim()) { alert("Slug é obrigatório"); return; }
         if (!searchIntent) { alert("🚨 Selecione a intenção de busca (SEO)."); return; }
         if (!coverImage) { alert("🚨 Artigo precisa de imagem principal."); return; }
-        if (category === "Reviews Sinceros") { alert("🚨 Categoria genérica 'Reviews Sinceros' não é permitida. Use uma categoria estratégica."); return; }
+
         if (!seoDescription || seoDescription.trim().length < 120) { alert("🚨 Meta description fraca (mínimo 120 caracteres)."); return; }
         if (!focusKeyword) { alert("🚨 O artigo requer uma Palavra-Chave Principal."); return; }
         if (!title.toLowerCase().includes(focusKeyword.toLowerCase().trim())) { alert("🚨 O título do artigo deve obrigatoriamente conter a palavra-chave principal."); return; }
@@ -297,7 +297,7 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
         // SEO/Quality Checks
         const textOnly = finalContent.replace(/<[^>]+>/g, ' ');
         const wordCount = textOnly.replace(/\s+/g, ' ').trim().split(' ').filter(Boolean).length;
-        if (wordCount < 800) { alert(`🚨 Conteúdo fraco: Mínimo de 800 palavras exigido (Atual: ${wordCount}).`); return; }
+        if (wordCount < 400) { alert(`🚨 Conteúdo fraco: Mínimo de 400 palavras exigido (Atual: ${wordCount}).`); return; }
         
         const hasH2 = /<h2[\s>]/i.test(finalContent);
         if (!hasH2) { alert("🚨 SEO: O artigo precisa ter pelo menos um subtítulo H2."); return; }
