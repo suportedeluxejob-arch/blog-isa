@@ -7,7 +7,7 @@ import ImageExtension from "@tiptap/extension-image";
 import LinkExtension from "@tiptap/extension-link";
 import { Color } from "@tiptap/extension-color";
 import { TextStyle } from "@tiptap/extension-text-style";
-import { BlogPost, getCategories, Category, FaqItem, ContentImage, RatingCriteria } from "@/services/postService";
+import { BlogPost, getCategories, Category, FaqItem, ContentImage, RatingCriteria, ComparisonItem } from "@/services/postService";
 import {
     Loader2, Save, ArrowLeft,
     Bold, Italic, List, ListOrdered, Quote, Heading2, Heading3, Link2, ImagePlus,
@@ -21,6 +21,10 @@ interface PostEditorProps {
     initialPost?: BlogPost;
     onSave: (post: Omit<BlogPost, "id" | "createdAt" | "updatedAt">) => Promise<void>;
 }
+
+const cleanContent = (html: string) => {
+    return html.replace(/\[cite:.*?\]/g, '').replace(/\[cite_start\]/g, '');
+};
 
 export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
     // Content Fields
@@ -65,6 +69,7 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
     const [faqItems, setFaqItems] = useState<FaqItem[]>(initialPost?.faqItems || []);
     const [contentImages, setContentImages] = useState<ContentImage[]>(initialPost?.contentImages || []);
     const [ratingCriteria, setRatingCriteria] = useState<RatingCriteria[]>(initialPost?.ratingCriteria || []);
+    const [comparisonTable, setComparisonTable] = useState<ComparisonItem[]>(initialPost?.comparisonTable || []);
 
     // State
     const [isSaving, setIsSaving] = useState(false);
@@ -133,9 +138,12 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
     };
 
     const handleExportJson = () => {
+        const rawContent = editor?.getHTML() || "";
+        const finalContent = cleanContent(rawContent);
+
         // Base fields visible to ALL article types in the UI
         const baseData: any = {
-            title, slug, excerpt, coverImage, content: editor?.getHTML() || "", category, articleType, searchIntent, status, author, 
+            title, slug, excerpt, coverImage, content: finalContent, category, articleType, searchIntent, status, author, 
             seoTitle, seoDescription, seoKeywords, focusKeyword, canonicalUrl, ogTitle, ogDescription, ogImage: coverImage, 
             schemaType: articleType === "sales" ? "Product" : articleType === "experience" ? "BlogPosting" : "Article", 
             
@@ -144,6 +152,7 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
             cons: cons.filter(c => c.trim()),
             faqItems: faqItems.filter(f => f.question.trim() && f.answer.trim()), 
             contentImages: contentImages.filter(img => img.url.trim()),
+            comparisonTable: comparisonTable.filter(c => c.label.trim()),
             verdict: verdict
         };
 
@@ -221,9 +230,10 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
                 if (postData.faqItems !== undefined) setFaqItems(postData.faqItems);
                 if (postData.contentImages !== undefined) setContentImages(postData.contentImages);
                 if (postData.ratingCriteria !== undefined) setRatingCriteria(postData.ratingCriteria);
+                if (postData.comparisonTable !== undefined) setComparisonTable(postData.comparisonTable);
                 
                 if (postData.content !== undefined && editor) {
-                    editor.commands.setContent(postData.content);
+                    editor.commands.setContent(cleanContent(postData.content));
                 }
                 
                 alert("✅ JSON Importado! Revise o conteúdo e clique em 'Salvar' para gravar no banco.");
@@ -238,8 +248,30 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
 
     const handleSave = async () => {
         if (!editor) return;
-        if (!title.trim()) { alert("Título é obrigatório"); return; }
+        if (!title || title.trim().length < 40) { alert("🚨 Título muito fraco para SEO (mínimo 40 caracteres)."); return; }
         if (!slug.trim()) { alert("Slug é obrigatório"); return; }
+        if (!searchIntent) { alert("🚨 Selecione a intenção de busca (SEO)."); return; }
+        
+        if (comparisonTable.length > 0 && comparisonTable.length < 2) {
+            alert("🚨 Tabela precisa ter pelo menos 2 itens para comparação.");
+            return;
+        }
+
+        const rawContent = editor.getHTML();
+        const finalContent = cleanContent(rawContent);
+        
+        // SEO/Quality Checks
+        const textOnly = finalContent.replace(/<[^>]+>/g, ' ');
+        const wordCount = textOnly.replace(/\s+/g, ' ').trim().split(' ').filter(Boolean).length;
+        if (wordCount < 800) { alert(`🚨 Conteúdo fraco: Mínimo de 800 palavras exigido (Atual: ${wordCount}).`); return; }
+        
+        const hasH2 = /<h2[\s>]/i.test(finalContent);
+        if (!hasH2) { alert("🚨 SEO: O artigo precisa ter pelo menos um subtítulo H2."); return; }
+        
+        const internalLinks = (finalContent.match(/href="(\/|https?:\/\/(www\.)?achadosvipdaisa\.com\.br)/gi) || []).length;
+        if (internalLinks < 2) { alert(`🚨 Cluster SEO: O artigo precisa ter pelo menos 2 links internos (Atual: ${internalLinks}).`); return; }
+        
+        if (!verdict || verdict.trim().length < 100) { alert("🚨 Veredito obrigatório: Forneça uma decisão clara com mais de 100 caracteres."); return; }
 
         setIsSaving(true);
         try {
@@ -248,7 +280,7 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
                 slug,
                 excerpt: excerpt || "",
                 coverImage: coverImage || "",
-                content: editor.getHTML(),
+                content: finalContent,
                 category: category || "",
                 articleType,
                 searchIntent,
@@ -286,6 +318,7 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
                 faqItems: faqItems.filter(f => f.question.trim() && f.answer.trim()),
                 contentImages: contentImages.filter(img => img.url.trim()),
                 ratingCriteria: ratingCriteria.filter(r => r.label.trim()),
+                comparisonTable: comparisonTable.filter(c => c.label.trim()),
             };
 
             await onSave(postData);
@@ -384,6 +417,12 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
         const n = [...ratingCriteria]; n[i] = { ...n[i], [field]: field === "score" ? Number(val) : val }; setRatingCriteria(n);
     };
     const removeRating = (i: number) => setRatingCriteria(ratingCriteria.filter((_, idx) => idx !== i));
+
+    const addComparisonItem = () => setComparisonTable([...comparisonTable, { label: "", peso: "", preco: "", precoKg: "" }]);
+    const updateComparisonItem = (i: number, field: keyof ComparisonItem, val: string) => {
+        const n = [...comparisonTable]; n[i] = { ...n[i], [field]: val }; setComparisonTable(n);
+    };
+    const removeComparisonItem = (i: number) => setComparisonTable(comparisonTable.filter((_, idx) => idx !== i));
 
     return (
         <div className="mx-auto max-w-6xl pb-20">
@@ -956,6 +995,57 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
                                 </div>
                             )}
 
+                            {/* COMPARISON TABLE */}
+                            <div className="rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
+                                <h3 className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-1">
+                                    <ListOrdered size={16} className="text-teal-500" />
+                                    Tabela de Comparação (SEO)
+                                </h3>
+                                <p className="text-xs text-gray-400 mb-4">Itens avaliados estruturadamente (ex: produtos, supermercados, Ovos de Páscoa)</p>
+
+                                <div className="space-y-4">
+                                    {comparisonTable.map((item, i) => (
+                                        <div key={i} className="flex flex-col gap-2 rounded-lg border border-teal-100 bg-teal-50/20 p-4">
+                                            <div className="flex justify-between items-center mb-1">
+                                                <span className="text-xs font-bold text-teal-600">ITEM {i + 1}</span>
+                                                <button onClick={() => removeComparisonItem(i)} className="text-gray-400 hover:text-red-500 transition-colors">
+                                                    <Trash2 size={16} />
+                                                </button>
+                                            </div>
+                                            <input
+                                                value={item.label}
+                                                onChange={(e) => updateComparisonItem(i, "label", e.target.value)}
+                                                className="w-full rounded border border-gray-200 p-2.5 text-sm font-medium focus:border-teal-400 focus:outline-none"
+                                                placeholder="Nome do Item (ex: Ovo Mercado Livre)"
+                                            />
+                                            <div className="grid grid-cols-3 gap-3">
+                                                <input
+                                                    value={item.peso || ""}
+                                                    onChange={(e) => updateComparisonItem(i, "peso", e.target.value)}
+                                                    className="w-full rounded border border-gray-200 p-2 text-sm focus:border-teal-400 focus:outline-none"
+                                                    placeholder="Peso/Unidade (ex: 250g)"
+                                                />
+                                                <input
+                                                    value={item.preco || ""}
+                                                    onChange={(e) => updateComparisonItem(i, "preco", e.target.value)}
+                                                    className="w-full rounded border border-gray-200 p-2 text-sm focus:border-teal-400 focus:outline-none"
+                                                    placeholder="Preço (ex: R$ 60)"
+                                                />
+                                                <input
+                                                    value={item.precoKg || ""}
+                                                    onChange={(e) => updateComparisonItem(i, "precoKg", e.target.value)}
+                                                    className="w-full rounded border border-gray-200 p-2 text-sm focus:border-teal-400 focus:outline-none"
+                                                    placeholder="Preço/Kg (ex: R$ 240/kg)"
+                                                />
+                                            </div>
+                                        </div>
+                                    ))}
+                                    <button onClick={addComparisonItem} className="flex items-center gap-1.5 text-sm text-teal-600 hover:text-teal-700 font-medium">
+                                        <Plus size={14} /> Adicionar Item à Tabela
+                                    </button>
+                                </div>
+                            </div>
+
                             {/* VERDICT */}
                             <div className="rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
                                 <h3 className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-3">
@@ -1284,6 +1374,10 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
                                     <span className={ratingCriteria.length > 0 ? "text-amber-600 font-medium" : "text-gray-400"}>{ratingCriteria.length} critério(s)</span>
                                 </div>
                             )}
+                            <div className="flex justify-between text-gray-600">
+                                <span>Tabela (SEO)</span>
+                                <span className={comparisonTable.length > 0 ? "text-teal-600 font-medium" : "text-gray-400"}>{comparisonTable.length} item(s)</span>
+                            </div>
                             <div className="flex justify-between text-gray-600">
                                 <span>Veredito</span>
                                 <span className={verdict ? "text-pink-600 font-medium" : "text-gray-400"}>{verdict ? "✓" : "—"}</span>

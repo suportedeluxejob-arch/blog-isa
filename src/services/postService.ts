@@ -23,6 +23,13 @@ export interface ContentImage {
     caption: string;
 }
 
+export interface ComparisonItem {
+    label: string;
+    peso?: string;
+    preco?: string;
+    precoKg?: string;
+}
+
 export interface RatingCriteria {
     label: string;
     score: number; // 1-5
@@ -73,6 +80,7 @@ export interface BlogPost {
     faqItems?: FaqItem[];
     contentImages?: ContentImage[];
     ratingCriteria?: RatingCriteria[];
+    comparisonTable?: ComparisonItem[];
     verdict?: string;
     // Timestamps
     createdAt: Timestamp;
