@@ -351,4 +351,3 @@ Se não atender isso → refaça.
 - **Saída Estrita**: Seu único output DEVE ser o código JSON processado. NUNCA adicione blocos de markdown antes ou depois (não feche com ```json). O output deve começar com `{` e terminar com `}`.
 - **Formatação de URL**: NUNCA utilize formato markdown para URLs dentro do JSON. NUNCA escreva `[https://...](https://...)` ou `href="[https://...](https://...)"`. Você deve usar APENAS O LINK PURO diretamente nas strings (`https://www...`).
 - **Tabelas e HTML**: É EXPRESSAMENTE PROIBIDO criar ou injetar tags `<table>` dentro da propriedade `"content"`. Para dados comparativos, preencha ESTRITAMENTE o array `"comparisonTable"` respeitando as chaves exatas mapeadas. A injeção de tabela solta corrompe gravemente nossa plataforma React.
-- **Categoria Proibida**: JAMAIS utilize `"category": "Reviews Sinceros"`. Você deve analisar o contexto e categorizar de forma estratégica e nichada.

@@ -231,6 +231,38 @@ function FirestoreArticle({ post }: { post: BlogPost }) {
                     />
                 </div>
 
+                {/* ======== COMPARISON TABLE BLOCK ======== */}
+                {post.comparisonTable && post.comparisonTable.length >= 2 && (
+                    <div className="mb-10">
+                        <h3 className="text-xl font-bold text-gray-900 mb-5 flex items-center gap-2">
+                            <BarChart2 className="w-5 h-5 text-pink-500" />
+                            Comparação de Preços
+                        </h3>
+                        <div className="overflow-x-auto rounded-2xl border border-gray-100 shadow-sm">
+                            <table className="w-full text-sm">
+                                <thead>
+                                    <tr className="bg-pink-50 border-b border-pink-100">
+                                        <th className="text-left px-5 py-4 font-bold text-pink-800">Opção</th>
+                                        <th className="text-center px-4 py-4 font-bold text-pink-800">Peso</th>
+                                        <th className="text-center px-4 py-4 font-bold text-pink-800">Preço</th>
+                                        <th className="text-center px-4 py-4 font-bold text-pink-800">Preço/kg</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {post.comparisonTable.map((item, i) => (
+                                        <tr key={i} className={`border-b border-gray-50 ${i % 2 === 0 ? "bg-white" : "bg-gray-50/50"} hover:bg-pink-50/30 transition-colors`}>
+                                            <td className="px-5 py-4 font-semibold text-gray-900">{item.label}</td>
+                                            <td className="px-4 py-4 text-center text-gray-600">{item.peso || "—"}</td>
+                                            <td className="px-4 py-4 text-center font-medium text-gray-900">{item.preco || "—"}</td>
+                                            <td className="px-4 py-4 text-center font-bold text-pink-700">{item.precoKg || "—"}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                )}
+
                 {/* ======== PROS & CONS BLOCK ======== */}
                 {(pros.length > 0 || cons.length > 0) && (
                     <div className="grid md:grid-cols-2 gap-4 mb-10">

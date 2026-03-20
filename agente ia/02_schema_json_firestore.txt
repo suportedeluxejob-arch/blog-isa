@@ -30,7 +30,7 @@ JSON inválido quebra o sistema (JSON.parse).
 - "title" → até 55 caracteres (claro + direto + keyword)
 - "content" → HTML válido com estrutura obrigatória (ver seção 5)
 - "excerpt" → até 140 caracteres (gatilho de clique)
-- "category" → Categoria nichada (NUNCA use "Reviews Sinceros")
+- "category" → manter a categoria original do blog (ex: "Reviews Sinceros") NÃO alterar
 - "articleType" → "sales", "educational" ou "experience"
 - "searchIntent" → "informational", "commercial" ou "transactional"
 - "status" → "published" ou "draft"
