@@ -13,7 +13,7 @@ import {
     Bold, Italic, List, ListOrdered, Quote, Heading2, Heading3, Link2, ImagePlus,
     Globe, Search, Target, AlertCircle, CheckCircle2, Info, LinkIcon,
     Plus, Trash2, Star, GripVertical, HelpCircle, ImageIcon, ThumbsUp, ThumbsDown,
-    ChevronDown, ChevronUp, MessageSquare, Award, Minus, Type, Pilcrow, Undo, Redo, Palette
+    ChevronDown, ChevronUp, MessageSquare, Award, Minus, Type, Pilcrow, Undo, Redo, Palette, Download, Upload
 } from "lucide-react";
 import Link from "next/link";
 
@@ -129,6 +129,88 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
         if (url && editor) {
             editor.chain().focus().setImage({ src: url, alt: "imagem" }).run();
         }
+    };
+
+    const handleExportJson = () => {
+        const postData = {
+            title, slug, excerpt, coverImage, content: editor?.getHTML() || "", category, articleType, status, author, 
+            seoTitle, seoDescription, seoKeywords, focusKeyword, canonicalUrl, ogTitle, ogDescription, ogImage: coverImage, 
+            schemaType: articleType === "sales" ? "Product" : articleType === "experience" ? "BlogPosting" : "Article", 
+            schemaAboutName, schemaAboutUrl, schemaMentions: schemaMentionsStr.split(',').map(m => m.trim()).filter(Boolean), 
+            ctaLink, ctaText, productName, productPrice, productRating, affiliateLink, affiliateButtonText, verdict, 
+            pros: pros.filter(p => p.trim()), cons: cons.filter(c => c.trim()), 
+            faqItems: faqItems.filter(f => f.question.trim() && f.answer.trim()), 
+            contentImages: contentImages.filter(img => img.url.trim()), 
+            ratingCriteria: ratingCriteria.filter(r => r.label.trim())
+        };
+        const dataStr = JSON.stringify(postData, null, 2);
+        const dataBlob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(dataBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `artigo-${slug || 'novo'}.json`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    };
+
+    const handleImportJson = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            try {
+                const jsonStr = event.target?.result as string;
+                const postData = JSON.parse(jsonStr);
+                
+                if (postData.title !== undefined) setTitle(postData.title);
+                if (postData.slug !== undefined) setSlug(postData.slug);
+                if (postData.excerpt !== undefined) setExcerpt(postData.excerpt);
+                if (postData.coverImage !== undefined) setCoverImage(postData.coverImage);
+                if (postData.category !== undefined) setCategory(postData.category);
+                if (postData.articleType !== undefined) setArticleType(postData.articleType);
+                if (postData.status !== undefined) setStatus(postData.status);
+                
+                if (postData.seoTitle !== undefined) setSeoTitle(postData.seoTitle);
+                if (postData.seoDescription !== undefined) setSeoDescription(postData.seoDescription);
+                if (postData.seoKeywords !== undefined) setSeoKeywords(postData.seoKeywords);
+                if (postData.focusKeyword !== undefined) setFocusKeyword(postData.focusKeyword);
+                if (postData.canonicalUrl !== undefined) setCanonicalUrl(postData.canonicalUrl);
+                if (postData.ogTitle !== undefined) setOgTitle(postData.ogTitle);
+                if (postData.ogDescription !== undefined) setOgDescription(postData.ogDescription);
+                
+                if (postData.schemaAboutName !== undefined) setSchemaAboutName(postData.schemaAboutName);
+                if (postData.schemaAboutUrl !== undefined) setSchemaAboutUrl(postData.schemaAboutUrl);
+                if (postData.schemaMentions !== undefined) setSchemaMentionsStr(Array.isArray(postData.schemaMentions) ? postData.schemaMentions.join(', ') : postData.schemaMentions || "");
+                if (postData.ctaLink !== undefined) setCtaLink(postData.ctaLink);
+                if (postData.ctaText !== undefined) setCtaText(postData.ctaText);
+                
+                if (postData.productName !== undefined) setProductName(postData.productName);
+                if (postData.productPrice !== undefined) setProductPrice(postData.productPrice);
+                if (postData.productRating !== undefined) setProductRating(postData.productRating);
+                if (postData.affiliateLink !== undefined) setAffiliateLink(postData.affiliateLink);
+                if (postData.affiliateButtonText !== undefined) setAffiliateButtonText(postData.affiliateButtonText);
+                if (postData.verdict !== undefined) setVerdict(postData.verdict);
+                
+                if (postData.pros !== undefined) setPros(postData.pros);
+                if (postData.cons !== undefined) setCons(postData.cons);
+                if (postData.faqItems !== undefined) setFaqItems(postData.faqItems);
+                if (postData.contentImages !== undefined) setContentImages(postData.contentImages);
+                if (postData.ratingCriteria !== undefined) setRatingCriteria(postData.ratingCriteria);
+                
+                if (postData.content !== undefined && editor) {
+                    editor.commands.setContent(postData.content);
+                }
+                
+                alert("✅ JSON Importado! Revise o conteúdo e clique em 'Salvar' para gravar no banco.");
+            } catch (err) {
+                console.error("Erro ao importar", err);
+                alert("Erro ao ler JSON. O formato pode estar inválido.");
+            }
+        };
+        reader.readAsText(file);
+        e.target.value = '';
     };
 
     const handleSave = async () => {
@@ -287,6 +369,29 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
                     <ArrowLeft size={16} /> Voltar ao Dashboard
                 </Link>
                 <div className="flex items-center gap-3">
+                    <button
+                        onClick={handleExportJson}
+                        className="flex items-center gap-2 rounded-lg bg-indigo-50 px-4 py-2.5 text-sm font-semibold text-indigo-600 hover:bg-indigo-100 transition-colors"
+                        title="Baixar JSON deste rascunho"
+                    >
+                        <Download size={16} /> JSON
+                    </button>
+                    
+                    <div className="relative flex items-center">
+                        <input 
+                            type="file" 
+                            accept=".json" 
+                            onChange={handleImportJson} 
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                            title="Importar configurações de JSON"
+                        />
+                        <button className="flex items-center gap-2 rounded-lg bg-emerald-50 px-4 py-2.5 text-sm font-semibold text-emerald-600 hover:bg-emerald-100 transition-colors pointer-events-none">
+                            <Upload size={16} /> Carregar JSON
+                        </button>
+                    </div>
+
+                    <div className="h-6 w-px bg-gray-200 mx-1"></div>
+
                     <select
                         value={status}
                         onChange={(e) => setStatus(e.target.value as any)}
