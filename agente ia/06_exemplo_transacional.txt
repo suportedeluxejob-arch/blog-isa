@@ -66,7 +66,7 @@ Todo artigo "sales" DEVE seguir:
 
 ---
 
-### 6. H2: Veredito final
+### 6. H2: DICAS DA ISA
 
 - decisão clara
 - sem ambiguidade

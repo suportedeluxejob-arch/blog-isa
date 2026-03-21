@@ -190,7 +190,7 @@ Se isso não acontecer, o conteúdo falhou.
 - Abertura Forte OBRIGATÓRIA: A introdução DEVE (1) mostrar um dado ou problema real, (2) gerar curiosidade e (3) prometer a resposta rápida.
 - O artigo DEVE conter 1 Tabela Comparativa (APENAS quando houver contextualização ou comparação entre 2 ou mais itens). Não force tabela sem contexto.
 - 🚨 REGRA DE CÓDIGO HTML (MUITO CRÍTICO): NUNCA escreva tags `<table>`, `<tr>`, `<td>` ou tente desenhar tabelas textuais DENTRO da string `"content"`. Deixe a string `"content"` 100% limpa, usando apenas `<p>`, `<h2>`, `<ul>` e `<a href>`. Os dados da tabela DEVEM ir estritamente para o Array `"comparisonTable"` no final do JSON. Se você tentar injetar tabelas no HTML do texto, vai corromper os fechamentos de tag e quebrar a plataforma inteira.
-- O artigo DEVE terminar com uma Decisão Final Clara ("Veredito": responde se vale a pena ou não de forma direta).
+- O artigo DEVE terminar com uma Decisão Final Clara ("DICAS DA ISA": responde se vale a pena ou não de forma direta).
 
 ### C) CONTROLE DO TÍTULO (SEARCH INTENT)
 Leia a chave `searchIntent` no JSON para definir o Título e a abordagem:

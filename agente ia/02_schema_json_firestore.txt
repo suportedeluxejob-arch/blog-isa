@@ -13,6 +13,26 @@ JSON inválido quebra o sistema (JSON.parse).
 
 ---
 
+## 1.1. REGRA ABSOLUTA DE URL — ERRO MAIS FREQUENTE DO MODELO
+
+🚨 **TODO campo de URL no JSON deve conter APENAS a URL pura. NUNCA use formato markdown.**
+
+O formato markdown de link é `[texto](url)`. Isso é PROIBIDO em TODOS os campos do JSON.
+
+### Campos que contêm URLs — exemplos CORRETOS vs ERRADOS:
+
+| Campo | ✅ CORRETO | ❌ ERRADO (QUEBRA TUDO) |
+|---|---|---|
+| coverImage | `"https://iili.io/abc.png"` | `"[https://iili.io/abc.png](https://iili.io/abc.png)"` |
+| ogImage | `"https://iili.io/abc.png"` | `"[https://iili.io/abc.png](https://iili.io/abc.png)"` |
+| canonicalUrl | `"https://www.achadosvipdaisa.com.br/achados/slug"` | `"[https://...](https://...)"` |
+| affiliateLink | `"https://meli.la/xyz"` | `"[https://meli.la/xyz](https://meli.la/xyz)"` |
+| href no content | `href=\"https://www.achadosvipdaisa.com.br/achados/slug\"` | `href=\"[https://...](https://...)\"` |
+
+**Regra de ouro: se você vê `[` antes de uma URL, ESTÁ ERRADO. Apague tudo e escreva apenas a URL pura.**
+
+---
+
 ## 2. Mapa de Propriedades
 
 ### 🔒 Chaves de Identidade (NUNCA alterar)
@@ -20,7 +40,7 @@ JSON inválido quebra o sistema (JSON.parse).
 - "id" → manter exatamente igual
 - "slug" → NÃO alterar (evita 404 e perda de SEO)
 - "createdAt" / "updatedAt" → manter formato original (timestamp)
-- "author" → sempre "Isabelle"
+- "author" → sempre "Isabelle Martins Calistar"
 - "coverImage" → nunca alterar
 
 ---
@@ -34,6 +54,7 @@ JSON inválido quebra o sistema (JSON.parse).
 - "articleType" → "sales", "educational" ou "experience"
 - "searchIntent" → "informational", "commercial" ou "transactional"
 - "status" → "published" ou "draft"
+- "verdict" → DEVE conter o texto puro da decisão final ("Sim, vale a pena porque...")
 
 ---
 
@@ -85,6 +106,21 @@ Links internos são obrigatórios para:
 
 ---
 
+## 4.1. Regras Críticas de Links no "content" (ANTI-QUEBRA DE JSON)
+
+🚨 NUNCA escreva URLs com espaço. O protocolo é SEMPRE `https://` (sem espaço após os dois pontos).
+- ✅ CORRETO: `href=\"https://www.achadosvipdaisa.com.br/achados/slug\"`
+- ❌ ERRADO: `href=\"https: //www.achadosvipdaisa.com.br/...\"` (espaço QUEBRA o JSON)
+
+🚨 Dentro da propriedade `"content"`, todo atributo HTML que use aspas duplas DEVE ter as aspas escapadas com barra invertida (`\"`).
+- ✅ CORRETO dentro do content: `<a href=\"https://www.achadosvipdaisa.com.br/achados/slug\">texto</a>`
+- ❌ ERRADO dentro do content: `<a href="https://www.achadosvipdaisa.com.br/achados/slug">texto</a>`
+- ❌ ERRADO GRAVE dentro do content: `<a href=\"[https://...](https://...)\">texto</a>`
+
+🚨 NUNCA use formato markdown `[url](url)` dentro do href do content. O href deve conter APENAS a URL pura com aspas escapadas.
+
+---
+
 ## 5. Estrutura Obrigatória do "content" (SEO REAL)
 
 Todo artigo DEVE seguir essa estrutura:
@@ -100,11 +136,11 @@ Todo artigo DEVE seguir essa estrutura:
 - Ex: supermercado vs premium vs caseiro
 - Deve conter lista ou tabela
 
-### H2: Melhor escolha
+### Melhor escolha
 - Indicação prática
 
-### H2: Veredito final
-- Decisão direta
+### H2: DICAS DA ISA
+- Decisão direta e conselho final
 
 ---
 
@@ -156,13 +192,13 @@ Exemplos:
 
 ---
 
-## 10. Verdict (OBRIGATÓRIO)
+## 10. O Campo Verdict e DICAS DA ISA (OBRIGATÓRIO)
 
-- Claro
-- Direto
-- Sem dúvida
+- A decisão final DEVE aparecer em dois lugares!
+1. Na chave `"verdict"` do JSON (texto puro, direto).
+2. Dentro do `"content"`, sob um subtítulo obrigatório `<h2>DICAS DA ISA</h2>`. 
 
-Exemplo:
+Exemplo para a chave "verdict":
 "Não vale a pena para economia. Só compensa como presente."
 
 ---

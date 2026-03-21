@@ -29,7 +29,7 @@ const cleanInternalLinks = (html: string) => {
 };
 
 const cleanContent = (html: string) => {
-    let cleaned = html.replace(/\[cite:.*?\]/g, '').replace(/\[cite_start\]/g, '');
+    let cleaned = html.replace(/\[cite.*?\]/g, '').replace(/\[cite_start\]/g, '');
     return cleanInternalLinks(cleaned);
 };
 

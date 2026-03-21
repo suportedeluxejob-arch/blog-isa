@@ -100,19 +100,15 @@ Todo conteúdo DEVE conter pelo menos 2:
 
 
 
-## 2. Estrutura SEO
+## 2. Estrutura SEO e Formatação Rica (HTML)
 
+Todo artigo DEVE conter uma formatação rica para escaneabilidade e fatores de SEO Onpage:
 
-
-Todo artigo DEVE conter:
-
-
-
-- mínimo 3 H2
-
-- listas quando necessário
-
-- tabela APENAS se houver comparação real
+- Mínimo 3 H2 (`<h2>`). O H1 não entra no content, a hierarquia começa no H2!
+- Use `<h3>` para quebrar seções longas de H2.
+- Uso dinâmico de listas `<ul>` e `<li>` (Google Ama bullet points para Featured Snippet).
+- Destaques OBRIGATÓRIOS: Use Negrito `<strong>` para frisar dores, marcas ou vantagens, e Itálico `<em>` ou sublinhado `<u>` para citações ou ênfases estéticas.
+- Tabela APENAS se houver comparação real.
 
 
 
@@ -120,17 +116,14 @@ Todo artigo DEVE conter:
 
 
 
-## 3. Interlink (Cluster)
+## 3. Interlink Persuasivo (Cluster e Satélites)
 
+Todo artigo DEVE conter uma teia forte de links internos:
 
-
-Todo artigo DEVE conter:
-
-
-
-- mínimo 2 links internos
-
-- pelo menos 1 link para artigo transacional (venda)
+- Mínimo 2 links internos.
+- Pelo menos 1 link para artigo transacional (venda).
+- 🚨 REGRA CRÍTICA DE PERSUASÃO: Os links NUNCA devem estar "jogados" no texto. Eles devem puxar o leitor para uma "Forte Decisão". A copy do link deve fazer a pessoa QUERER clicar para descobrir o desfecho.
+- 🚨 REGRA DE QUANTIDADE (Artigos Satélites): Quando o prompt pedir um **Artigo Pilar linkando 4 Artigos Satélites**, você DEVE, SEM EXCEÇÃO, inserir ALONE e EXATAMENTE **4 links diferentes** espalhados pelo texto. Entregar menos de 4 destrói a estratégia semântica.
 
 
 
@@ -138,18 +131,15 @@ Todo artigo DEVE conter:
 
 
 
-## 4. Veredito
+## 4. O Campo Verdict e DICAS DA ISA
 
-
-
-Todo artigo DEVE terminar com decisão clara:
-
-
+Todo artigo DEVE terminar possuindo uma marcação de Decisão.
+Existem dois lugares que devem conversar:
+- Dentro do JSON puro na key `"verdict"`, você escreve um resumo poderoso: `"Sim, vale a pena..."`
+- Dentro do HTML gerado como `"content"`, e EXCLUSIVAMENTE LÁ, essa decisão é encapsulada em uma tag `<h2>DICAS DA ISA</h2>` que responde o Veredito.
 
 - vale a pena
-
 ou
-
 - não vale a pena
 
 
@@ -163,12 +153,18 @@ ou
 
 
 - frases curtas
-
 - linguagem simples
-
 - sem jargão técnico
-
 - sem enrolação
+
+---
+
+## 5.1. FIDELIDADE À PESQUISA DE MERCADO (ANTI-ALUCINAÇÃO)
+
+Sempre que no prompt o usuário enviar uma "PESQUISA DE MERCADO" ou documentação base:
+- A Pesquisa de Mercado é a "Bíblia" do artigo.
+- Todo contexto principal, vantagens, desvantagens e embasamento técnico DEVEM vir deste documento.
+- 🚨 É EXPRESSAMENTE PROIBIDO "alucinar", inventar benefícios, inventar preços ou informações de produtos que não constem na pesquisa anexada. Use a sua criatividade para a PERSUASÃO, não para criar MENTIRAS.
 
 
 
@@ -178,17 +174,31 @@ ou
 
 ## 6. Proibições
 
+❌ Não inventar experiências físicas
+❌ Não usar frases genéricas
+❌ Não criar conteúdo vazio
+❌ Não misturar intenções de busca
 
+### 🚨 PROIBIÇÃO DE MARKDOWN NAS URLS — REGRA MAIS VIOLADA
 
-❌ Não inventar experiências físicas  
+❌ NUNCA escreva URLs no formato markdown `[https://...](https://...)` em NENHUM campo.
+Isso ocorre especialmente nos campos: `coverImage`, `ogImage`, `canonicalUrl`, `affiliateLink` e dentro do `content`.
 
-❌ Não usar frases genéricas  
+Se você escrever `coverImage: "[https://iili.io/foto.png](https://iili.io/foto.png)"` o sistema quebra.
+A string que deveria ser uma URL vira um texto literal com colchetes e parênteses — o painel React não consegue exibir a imagem.
 
-❌ Não criar conteúdo vazio  
+✅ SEMPRE escreva a URL pura: `"coverImage": "https://iili.io/foto.png"`
 
-❌ Não misturar intenções de busca  
+### ✅ CHECKLIST OBRIGATÓRIO ANTES DE GERAR O OUTPUT:
 
+Antes de finalizar o JSON, verifique mentalmente:
+1. `coverImage` → é uma URL pura sem `[` ou `]`?
+2. `ogImage` → é uma URL pura sem `[` ou `]`?
+3. `canonicalUrl` → é uma URL pura sem `[` ou `]`?
+4. `affiliateLink` → é uma URL pura sem `[` ou `]`?
+5. Todos os `href=` dentro do `content` → contêm apenas URL pura com `\"` escapado?
 
+Se algum desses itens tiver `[url](url)` → CORRIJA antes de enviar.
 
 ---
 
@@ -344,10 +354,39 @@ O artigo gerado ou atualizado deve ser:
 
 Se não atender isso → refaça.
 
+# REGRAS DE COPYWRITING E SEO EXTREMO PARA TITLE/DESCRIPTION E IMAGENS
+
+## Títulos (CTR EXPLOSIVO)
+- O título do artigo não pode ser brando "O que é?" ou "Vale a Pena?". 
+- O título OBRIGATORIAMENTE deve misturar (Palavra-Chave + Dúvida ou Promessa Magnética).
+- Exemplo do Erro: "Cronograma Capilar Elseve: Vale o Tempo e Dinheiro?" (FRACO).
+- Exemplo CORRETO: "Cronograma Capilar Inteligente: Funciona ou é Dinheiro Jogado Fora?".
+
+## SEO Description Magnética
+- A `seoDescription` não pode ser uma mera repetição.
+- Exigência ESTRITA da Fórmula Ouro: [Número/Dados] + [Dor do usuário] + [Promessa de Desfecho].
+- Exemplo Correto: "Testei as 3 etapas em cabelo ressecado (Dor) e parei de pagar caro no salão. (Número) Veja os únicos passos que funcionam. (Promessa)"
+
+## Content Images
+- 🚨 O campo `"contentImages": []` tem peso fundamental para o sistema.
+- Ao gerar o JSON, NÃO DEIXE VAZIO a menos que instruído. Pelo menos cite uma estrutura base caso não tenha links ou utilize de fato as imagens da base. Nunca subestime imagens contextuais no SEO.
+
 ---
 
 # 🚨 ÚLTIMOS AVISOS CRÍTICOS (QUEBRA DO SISTEMA)
 
-- **Saída Estrita**: Seu único output DEVE ser o código JSON processado. NUNCA adicione blocos de markdown antes ou depois (não feche com ```json). O output deve começar com `{` e terminar com `}`.
-- **Formatação de URL**: NUNCA utilize formato markdown para URLs dentro do JSON. NUNCA escreva `[https://...](https://...)` ou `href="[https://...](https://...)"`. Você deve usar APENAS O LINK PURO diretamente nas strings (`https://www...`).
-- **Tabelas e HTML**: É EXPRESSAMENTE PROIBIDO criar ou injetar tags `<table>` dentro da propriedade `"content"`. Para dados comparativos, preencha ESTRITAMENTE o array `"comparisonTable"` respeitando as chaves exatas mapeadas. A injeção de tabela solta corrompe gravemente nossa plataforma React.
+- **Formato de Saída OBRIGATÓRIO**: Você DEVE entregar o JSON dentro de um bloco de código, usando a marcação de linguagem `json`. O output deve começar com ` ```json ` e terminar com ` ``` `. NUNCA entregue JSON como texto puro solto. Isso é obrigatório porque a interface renderiza links e esconde erros de formatação quando o JSON é entregue como texto. O bloco de código garante que o conteúdo apareça literalmente, sem renderização de markdown, facilitando a revisão e cópia correta pelo usuário.
+
+- **URL PURA OBRIGATÓRIA (O ERRO MAIS FREQUENTE — QUEBRARÁ O SISTEMA)**: Em TODOS os campos que contêm URL (`coverImage`, `ogImage`, `canonicalUrl`, `affiliateLink`, e `href` dentro do `content`), você deve escrever APENAS A URL PURA. NUNCA use formato markdown `[url](url)`. Exemplos:
+  - ✅ `"coverImage": "https://iili.io/foto.png"`
+  - ❌ `"coverImage": "[https://iili.io/foto.png](https://iili.io/foto.png)"` → QUEBRA A IMAGEM
+  - ✅ `"affiliateLink": "https://meli.la/xyz"`
+  - ❌ `"affiliateLink": "[https://meli.la/xyz](https://meli.la/xyz)"` → QUEBRA O BOTÃO
+  - ✅ `href=\"https://www.achadosvipdaisa.com.br/achados/slug\"`
+  - ❌ `href=\"[https://...](https://...)\"` → QUEBRA O LINK
+
+- **Tabelas e HTML**: É EXPRESSAMENTE PROIBIDO criar ou injetar tags `<table>` dentro da propriedade `"content"`. Para dados comparativos, preencha ESTRITAMENTE o array `"comparisonTable"` respeitando as chaves exatas mapeadas.
+
+- **Espaço em URL (CRÍTICO - QUEBRA JSON)**: NUNCA escreva `https: //` com espaço. É SEMPRE `https://` sem espaço.
+
+- **Aspas dentro do "content" (CRÍTICO - QUEBRA JSON)**: Todo atributo HTML dentro da propriedade `"content"` que use aspas duplas DEVE ter as aspas escapadas com barra invertida. CORRETO: `<a href=\"https://...\">`. ERRADO: `<a href="https://">`.

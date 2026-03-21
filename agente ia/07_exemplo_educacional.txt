@@ -56,7 +56,7 @@ Todo artigo "educational" DEVE seguir:
 
 ---
 
-### 6. H2: Veredito final
+### 6. H2: DICAS DA ISA
 
 - resumo claro
 - decisão simples
