@@ -161,24 +161,24 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
             schemaType: articleType === "sales" ? "Product" : articleType === "experience" ? "BlogPosting" : "Article", 
             
             // Blocks tab (visible to all)
-            pros: pros.filter(p => p.trim()), 
-            cons: cons.filter(c => c.trim()),
-            faqItems: faqItems.filter(f => f.question.trim() && f.answer.trim()), 
-            contentImages: contentImages.filter(img => img.url.trim()),
-            comparisonTable: comparisonTable.filter(c => c.label.trim()),
-            verdict: verdict
+            pros: pros.filter(p => (p || "").trim()), 
+            cons: cons.filter(c => (c || "").trim()),
+            faqItems: faqItems.filter(f => (f?.question || "").trim() && (f?.answer || "").trim()), 
+            contentImages: contentImages.filter(img => (img?.url || "").trim()),
+            comparisonTable: comparisonTable.filter(c => (c?.label || "").trim()),
+            verdict: verdict || ""
         };
 
         // Specific fields based on UI tab rendering conditions
         if (articleType === "sales") {
-            baseData.productName = productName;
-            baseData.productPrice = productPrice;
-            baseData.productRating = productRating;
-            baseData.affiliateLink = affiliateLink;
-            baseData.affiliateButtonText = affiliateButtonText;
-            baseData.ratingCriteria = ratingCriteria.filter(r => r.label.trim());
+            baseData.productName = productName || "";
+            baseData.productPrice = productPrice || "";
+            baseData.productRating = productRating || 0;
+            baseData.affiliateLink = affiliateLink || "";
+            baseData.affiliateButtonText = affiliateButtonText || "";
+            baseData.ratingCriteria = ratingCriteria.filter(r => (r?.label || "").trim());
         } else if (articleType === "educational") {
-            baseData.ratingCriteria = ratingCriteria.filter(r => r.label.trim());
+            baseData.ratingCriteria = ratingCriteria.filter(r => (r?.label || "").trim());
         } else if (articleType === "experience") {
             baseData.schemaAboutName = schemaAboutName;
             baseData.schemaAboutUrl = schemaAboutUrl;
@@ -261,14 +261,14 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
 
     const handleSave = async () => {
         if (!editor) return;
-        if (!title || title.trim().length < 40) { alert("🚨 Título muito fraco para SEO (mínimo 40 caracteres)."); return; }
-        if (!slug.trim()) { alert("Slug é obrigatório"); return; }
+        if (!title || (title || "").trim().length < 40) { alert("🚨 Título muito fraco para SEO (mínimo 40 caracteres)."); return; }
+        if (!(slug || "").trim()) { alert("Slug é obrigatório"); return; }
         if (!searchIntent) { alert("🚨 Selecione a intenção de busca (SEO)."); return; }
         if (!coverImage) { alert("🚨 Artigo precisa de imagem principal."); return; }
 
-        if (!seoDescription || seoDescription.trim().length < 120) { alert("🚨 Meta description fraca (mínimo 120 caracteres)."); return; }
+        if (!seoDescription || (seoDescription || "").trim().length < 120) { alert("🚨 Meta description fraca (mínimo 120 caracteres)."); return; }
         if (!focusKeyword) { alert("🚨 O artigo requer uma Palavra-Chave Principal."); return; }
-        if (!title.toLowerCase().includes(focusKeyword.toLowerCase().trim())) { alert("🚨 O título do artigo deve obrigatoriamente conter a palavra-chave principal."); return; }
+        if (!(title || "").toLowerCase().includes((focusKeyword || "").toLowerCase().trim())) { alert("🚨 O título do artigo deve obrigatoriamente conter a palavra-chave principal."); return; }
         if (faqItems.length < 3) { alert("🚨 Adicione pelo menos 3 perguntas no FAQ para Rich Results."); return; }
 
         let rawContent = editor.getHTML();
@@ -347,12 +347,12 @@ export default function PostEditor({ initialPost, onSave }: PostEditorProps) {
                 affiliateButtonText: articleType === "sales" ? (affiliateButtonText || "") : "",
                 verdict: verdict || "",
                 // Structured blocks - arrays are OK in Firestore
-                pros: pros.filter(p => p.trim()),
-                cons: cons.filter(c => c.trim()),
-                faqItems: faqItems.filter(f => f.question.trim() && f.answer.trim()),
-                contentImages: contentImages.filter(img => img.url.trim()),
-                ratingCriteria: ratingCriteria.filter(r => r.label.trim()),
-                comparisonTable: comparisonTable.filter(c => c.label.trim()),
+                pros: pros.filter(p => (p || "").trim()),
+                cons: cons.filter(c => (c || "").trim()),
+                faqItems: faqItems.filter(f => (f?.question || "").trim() && (f?.answer || "").trim()),
+                contentImages: contentImages.filter(img => (img?.url || "").trim()),
+                ratingCriteria: ratingCriteria.filter(r => (r?.label || "").trim()),
+                comparisonTable: comparisonTable.filter(c => (c?.label || "").trim()),
             };
 
             await onSave(postData);
