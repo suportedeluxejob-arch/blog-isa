@@ -50,7 +50,16 @@ Formato:
 ou
 "https://www.achadosvipdaisa.com.br/experiencias/[slug]"
 
-- "schemaType" → usar "Article" na maioria dos casos
+- "schemaType" → DERIVADO AUTOMATICAMENTE com base em `articleType` + `searchIntent`. Use a tabela abaixo:
+
+| articleType  | searchIntent   | schemaType OBRIGATÓRIO |
+|--------------|----------------|------------------------|
+| sales        | transactional  | "Product"              |
+| educational  | informational  | "Article"              |
+| experience   | commercial     | "Article"              |
+
+🚨 REGRA CRÍTICA: NUNCA use "Article" em artigos "sales" + "transactional". O Schema Product é o que gera estrelinhas e preço no Google (Rich Snippets). Errar aqui destrói o potencial de ranking do artigo.
+
 - "schemaMentions" → entidades reais (marcas, ingredientes, categorias)
 
 ---
